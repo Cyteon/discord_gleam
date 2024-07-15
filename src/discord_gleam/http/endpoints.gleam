@@ -5,8 +5,6 @@ import gleam/dynamic
 import gleam/hackney
 import gleam/http
 import gleam/http/response
-import gleam/json
-import gleam/result
 
 pub fn me(token: String) -> Result(user.User, error.DiscordError) {
   let request = request.new_auth(http.Get, "/users/@me", token)
