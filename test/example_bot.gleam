@@ -1,4 +1,5 @@
 import discord_gleam/http/endpoints
+import discord_gleam/logging
 import gleam/io
 
 pub fn main(token: String) {
@@ -8,13 +9,14 @@ pub fn main(token: String) {
   let response = endpoints.me(token)
   case response {
     Ok(me) -> {
-      io.println(
+      logging.println(
         "Hello from "
-        <> me.username
-        <> "#"
-        <> me.discriminator
-        <> " with the ID "
-        <> me.id,
+          <> me.username
+          <> "#"
+          <> me.discriminator
+          <> " with the ID "
+          <> me.id,
+        "",
       )
     }
     Error(_) -> {

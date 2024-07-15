@@ -4,13 +4,13 @@
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/discord_gleam/)
 
 ```sh
-gleam add discord_gleam@1
+gleam add discord_gleam
 ```
 ```gleam
 import discord_gleam
 
 pub fn main() {
-  // TODO: An example of the project in use
+  todo
 }
 ```
 
