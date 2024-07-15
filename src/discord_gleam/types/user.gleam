@@ -1,7 +1,6 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
 import discord_gleam/internal/error
 import gleam/dynamic
-import gleam/io
 import gleam/json
 import gleam/result
 import gleam/string
@@ -37,8 +36,9 @@ pub type User {
 /// Decode a string to a PartialUser
 pub fn from_json_string(encoded: String) -> Result(User, error.DiscordError) {
   case string.contains(encoded, "401: Unauthorized") {
-    True ->
+    True -> {
       Error(error.Unauthorized("Error, 401, Unauthorized :c, is token correct?"))
+    }
     False -> {
       let decoder =
         dynamic.decode4(
