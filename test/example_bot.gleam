@@ -19,8 +19,11 @@ pub fn main(token: String) {
         "",
       )
     }
-    Error(_) -> {
-      io.println("Error")
+    Error(err) -> {
+      logging.println("Error fetching user", "error")
+      io.debug(err)
+
+      Nil
     }
   }
 }

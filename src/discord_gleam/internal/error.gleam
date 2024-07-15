@@ -15,4 +15,5 @@ pub type DiscordError {
   NilMapEntry(Nil)
   /// Used when a builder dosen't have all of the properties it requires
   BadBuilderProperties(String)
+  Unauthorized(String)
 }

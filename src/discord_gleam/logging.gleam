@@ -25,6 +25,9 @@ fn get_date_string() -> String {
   date_without_timezone <> " " <> time_without_timezone
 }
 
+/// Logging types: log (default), info, warn, error
+/// Prints like this: 2024-01-01 12:00:00 | LOG_TYPE | Content
+/// Example: println("Hello, world!", "info")
 pub fn println(content: String, log_type: String) {
   let log_splitter = case log_type {
     "info" -> "\u{001b}[34mINFO"

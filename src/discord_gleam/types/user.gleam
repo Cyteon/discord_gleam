@@ -1,11 +1,14 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
 import discord_gleam/internal/error
 import gleam/dynamic
+import gleam/io
 import gleam/json
 import gleam/result
+import gleam/string
 
 import gleam/option.{type Option}
 
+/// User object containing PartialUser and FullUser
 pub type User {
   PartialUser(
     id: Snowflake,
@@ -31,16 +34,23 @@ pub type User {
   )
 }
 
+/// Decode a string to a PartialUser
 pub fn from_json_string(encoded: String) -> Result(User, error.DiscordError) {
-  let decoder =
-    dynamic.decode4(
-      PartialUser,
-      dynamic.field("id", of: snowflake.from_dynamic),
-      dynamic.field("username", of: dynamic.string),
-      dynamic.field("discriminator", of: dynamic.string),
-      dynamic.field("avatar", of: dynamic.optional(dynamic.string)),
-    )
+  case string.contains(encoded, "401: Unauthorized") {
+    True ->
+      Error(error.Unauthorized("Error, 401, Unauthorized :c, is token correct?"))
+    False -> {
+      let decoder =
+        dynamic.decode4(
+          PartialUser,
+          dynamic.field("id", of: snowflake.from_dynamic),
+          dynamic.field("username", of: dynamic.string),
+          dynamic.field("discriminator", of: dynamic.string),
+          dynamic.field("avatar", of: dynamic.optional(dynamic.string)),
+        )
 
-  json.decode(from: encoded, using: decoder)
-  |> result.map_error(error.InvalidJson)
+      json.decode(from: encoded, using: decoder)
+      |> result.map_error(error.InvalidJson)
+    }
+  }
 }
