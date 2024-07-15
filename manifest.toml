@@ -23,9 +23,9 @@ packages = [
 ]
 
 [requirements]
-birl = { version = ">= 1.7.1 and < 2.0.0"}
+birl = { version = ">= 1.7.1 and < 2.0.0" }
 dotenv = { version = ">= 3.1.0 and < 4.0.0" }
-gleam_erlang = { version = ">= 0.25.0 and < 1.0.0" }
+gleam_erlang = { version = ">= 0.25.0 and < 1.0.0"}
 gleam_hackney = { version = ">= 1.2.0 and < 2.0.0" }
 gleam_http = { version = ">= 3.6.0 and < 4.0.0" }
 gleam_json = { version = ">= 2.0.0 and < 3.0.0" }
