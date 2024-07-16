@@ -1,3 +1,5 @@
+import discord_gleam/ws/packets/hello
+import discord_gleam/ws/packets/identify
 import gleam/erlang/process
 import gleam/function
 import gleam/http
@@ -5,11 +7,16 @@ import gleam/http/request
 import gleam/option
 import gleam/otp/actor
 import logging
+import repeatedly
 import stratus
 
 pub type Msg {
   Close
   TimeUpdated(String)
+}
+
+pub type State {
+  State(has_received_hello: Bool)
 }
 
 pub fn main(token: String) {
@@ -18,36 +25,63 @@ pub fn main(token: String) {
   let req =
     request.new()
     |> request.set_host("gateway.discord.gg")
-    |> request.set_scheme(http.Http)
-    //|> request.set_port(80)
+    |> request.set_scheme(http.Https)
     |> request.set_path("/?v=10&encoding=json")
     |> request.set_header(
       "User-Agent",
-      "DiscordBot, lang: Gleam, library: https://github.com/cyteon/discord_gleam",
+      "DiscordBot (https://github.com/cyteon/discord_gleam, 0.0.0)",
     )
+    |> request.set_header("Host", "gateway.discord.gg")
+    |> request.set_header("Connection", "Upgrade")
+    |> request.set_header("Upgrade", "websocket")
+    |> request.set_header("Sec-WebSocket-Version", "13")
 
   logging.log(logging.Debug, "Creating builder")
 
+  let initial_state = State(has_received_hello: False)
   let builder =
     stratus.websocket(
       request: req,
       init: fn() {
         logging.log(logging.Debug, "Builder init")
-
-        #(Nil, option.None)
+        #(initial_state, option.None)
       },
       loop: fn(msg, state, conn) {
         case msg {
           stratus.Text(msg) -> {
             logging.log(logging.Debug, msg)
+            case state.has_received_hello {
+              False -> {
+                let identify = identify.create_packet(token)
+                stratus.send_text_message(conn, identify)
+
+                let new_state = State(has_received_hello: True)
+
+                let heartbeat = hello.string_to_data(msg)
+
+                process.start(
+                  fn() {
+                    repeatedly.call(heartbeat, Nil, fn(_state, _count_) {
+                      stratus.send_text_message(
+                        conn,
+                        "{\"op\": 1, \"d\": null, \"s\": null}",
+                      )
+                    })
+                  },
+                  False,
+                )
+
+                actor.continue(new_state)
+              }
+              True -> {
+                actor.continue(state)
+              }
+            }
+          }
+          stratus.User(msg) -> {
+            logging.log(logging.Debug, msg)
             actor.continue(state)
           }
-
-          stratus.User(_) -> {
-            logging.log(logging.Debug, "User message")
-            actor.continue(state)
-          }
-
           stratus.Binary(_) -> {
             logging.log(logging.Debug, "Binary message")
             actor.continue(state)
@@ -58,9 +92,6 @@ pub fn main(token: String) {
     |> stratus.on_close(fn(_state) { logging.log(logging.Info, "oh noooo") })
 
   let assert Ok(subj) = stratus.initialize(builder)
-
-  //let id_packet = identify.create_packet(token)
-  //stratus.send_message(subj, id_packet)
 
   let done =
     process.new_selector()
