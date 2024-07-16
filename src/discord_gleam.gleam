@@ -1,17 +1,5 @@
-import discord_gleam/http/endpoints
-import discord_gleam/internal/error
-import gleam/io
+import discord_gleam/ws/event_loop
 
-pub fn run(token: String) -> Result(Nil, error.DiscordError) {
-  let user = endpoints.me(token)
-  case user {
-    Ok(_) -> {
-      io.debug("Successfully authenticated")
-      Ok(Nil)
-    }
-    Error(err) -> {
-      io.debug(err)
-      Error(err)
-    }
-  }
+pub fn run(token: String) -> Nil {
+  event_loop.main(token)
 }

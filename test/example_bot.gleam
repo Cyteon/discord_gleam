@@ -1,29 +1,9 @@
-import discord_gleam/http/endpoints
-import gleam/erlang/process
-import gleam/io
+import discord_gleam
 import logging
 
 pub fn main(token: String) {
   logging.configure()
+  logging.set_level(logging.Debug)
 
-  let response = endpoints.me(token)
-  case response {
-    Ok(me) -> {
-      logging.log(
-        logging.Info,
-        "Hello from "
-          <> me.username
-          <> "#"
-          <> me.discriminator
-          <> " with the ID "
-          <> me.id,
-      )
-      process.sleep(100)
-    }
-    Error(err) -> {
-      io.debug(err)
-
-      Nil
-    }
-  }
+  discord_gleam.run(token)
 }
