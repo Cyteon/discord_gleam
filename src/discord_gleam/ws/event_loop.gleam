@@ -4,6 +4,7 @@ import gleam/erlang/process
 import gleam/function
 import gleam/http
 import gleam/http/request
+import gleam/int
 import gleam/option
 import gleam/otp/actor
 import logging
@@ -16,7 +17,7 @@ pub type Msg {
 }
 
 pub type State {
-  State(has_received_hello: Bool)
+  State(has_received_hello: Bool, sequence: Int)
 }
 
 pub fn main(token: String) {
@@ -38,7 +39,7 @@ pub fn main(token: String) {
 
   logging.log(logging.Debug, "Creating builder")
 
-  let initial_state = State(has_received_hello: False)
+  let initial_state = State(has_received_hello: False, sequence: 0)
   let builder =
     stratus.websocket(
       request: req,
@@ -53,19 +54,26 @@ pub fn main(token: String) {
             case state.has_received_hello {
               False -> {
                 let identify = identify.create_packet(token)
-                stratus.send_text_message(conn, identify)
+                let _ = stratus.send_text_message(conn, identify)
 
-                let new_state = State(has_received_hello: True)
+                let new_state = State(has_received_hello: True, sequence: 0)
 
                 let heartbeat = hello.string_to_data(msg)
 
                 process.start(
                   fn() {
                     repeatedly.call(heartbeat, Nil, fn(_state, _count_) {
-                      stratus.send_text_message(
-                        conn,
-                        "{\"op\": 1, \"d\": null, \"s\": null}",
+                      let packet =
+                        "{\"op\": 1, \"d\": null, \"s\": "
+                        <> int.to_string(state.sequence)
+                        <> "}"
+
+                      logging.log(
+                        logging.Debug,
+                        "Sending heartbeat: " <> packet,
                       )
+
+                      stratus.send_text_message(conn, packet)
                     })
                   },
                   False,
