@@ -20,7 +20,7 @@ pub type Msg {
 }
 
 pub type State {
-  State(has_received_hello: Bool, sequence: Int)
+  State(has_received_hello: Bool, s: Int)
 }
 
 pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
@@ -42,7 +42,7 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
 
   logging.log(logging.Debug, "Creating builder")
 
-  let initial_state = State(has_received_hello: False, sequence: 0)
+  let initial_state = State(has_received_hello: False, s: 0)
   let builder =
     stratus.websocket(
       request: req,
@@ -59,7 +59,7 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
                 let identify = identify.create_packet(bot.token)
                 let _ = stratus.send_text_message(conn, identify)
 
-                let new_state = State(has_received_hello: True, sequence: 0)
+                let new_state = State(has_received_hello: True, s: 0)
 
                 let heartbeat = hello.string_to_data(msg)
 
@@ -68,7 +68,9 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
                     repeatedly.call(heartbeat, Nil, fn(_state, _count_) {
                       let packet =
                         "{\"op\": 1, \"d\": null, \"s\": "
-                        <> int.to_string(state.sequence)
+                        <> int.to_string(state.s)
+                        // TODO: This is wrong, its always 0???
+                        // Might be an issue with state cause this is in a process
                         <> "}"
 
                       logging.log(
@@ -88,7 +90,7 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
                 let generic_packet = generic.string_to_data(msg)
 
                 let new_state =
-                  State(has_received_hello: True, sequence: generic_packet.s)
+                  State(has_received_hello: True, s: generic_packet.s)
 
                 event_handler.handle_event(bot, msg, event_handlers)
 
