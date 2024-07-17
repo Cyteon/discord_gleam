@@ -35,14 +35,14 @@ pub fn me(token: String) -> Result(user.User, error.DiscordError) {
 
 pub fn send_message(
   token: String,
-  message: message.Message,
   channel_id: String,
+  message: message.Message,
 ) -> Nil {
   let data = message.to_string(message)
 
   io.debug(data)
 
-  logging.log(logging.Debug, "Sending message: " <> message.content)
+  logging.log(logging.Debug, "Sending message: " <> data)
 
   let request =
     request.new_auth_post(

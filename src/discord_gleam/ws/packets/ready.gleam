@@ -4,7 +4,7 @@ import gleam/result
 import logging
 
 pub type ReadyUser {
-  ReadyUser(username: String)
+  ReadyUser(username: String, id: String, discriminator: String, bot: Bool)
 }
 
 pub type ReadyData {
@@ -29,9 +29,12 @@ pub fn string_to_data(encoded: String) -> Result(ReadyPacket, String) {
           dynamic.field("v", of: dynamic.int),
           dynamic.field(
             "user",
-            of: dynamic.decode1(
+            of: dynamic.decode4(
               ReadyUser,
               dynamic.field("username", of: dynamic.string),
+              dynamic.field("id", of: dynamic.string),
+              dynamic.field("discriminator", of: dynamic.string),
+              dynamic.field("bot", of: dynamic.bool),
             ),
           ),
         ),

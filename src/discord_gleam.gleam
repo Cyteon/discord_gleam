@@ -15,8 +15,13 @@ pub fn run(
   event_loop.main(bot, event_handlers)
 }
 
-pub fn send_message(bot: bot.Bot, message: String, channel_id: String) -> Nil {
-  let msg = message.Message(content: message)
+pub fn send_message(
+  bot: bot.Bot,
+  channel_id: String,
+  message: String,
+  embeds: List(message.Embed),
+) -> Nil {
+  let msg = message.Message(content: message, embeds: embeds)
 
-  endpoints.send_message(bot.token, msg, channel_id)
+  endpoints.send_message(bot.token, channel_id, msg)
 }

@@ -1,5 +1,6 @@
 import discord_gleam/event_handler
 import discord_gleam/types/bot
+import discord_gleam/ws/packets/generic
 import discord_gleam/ws/packets/hello
 import discord_gleam/ws/packets/identify
 import gleam/erlang/process
@@ -84,9 +85,14 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
                 actor.continue(new_state)
               }
               True -> {
+                let generic_packet = generic.string_to_data(msg)
+
+                let new_state =
+                  State(has_received_hello: True, sequence: generic_packet.s)
+
                 event_handler.handle_event(bot, msg, event_handlers)
 
-                actor.continue(state)
+                actor.continue(new_state)
               }
             }
           }
