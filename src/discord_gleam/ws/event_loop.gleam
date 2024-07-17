@@ -1,4 +1,5 @@
 import discord_gleam/event_handler
+import discord_gleam/types/bot
 import discord_gleam/ws/packets/hello
 import discord_gleam/ws/packets/identify
 import gleam/erlang/process
@@ -21,7 +22,7 @@ pub type State {
   State(has_received_hello: Bool, sequence: Int)
 }
 
-pub fn main(token: String, event_handlers: List(event_handler.EventHandler)) {
+pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
   logging.log(logging.Debug, "Requesting gateway")
 
   let req =
@@ -54,7 +55,7 @@ pub fn main(token: String, event_handlers: List(event_handler.EventHandler)) {
             logging.log(logging.Debug, msg)
             case state.has_received_hello {
               False -> {
-                let identify = identify.create_packet(token)
+                let identify = identify.create_packet(bot.token)
                 let _ = stratus.send_text_message(conn, identify)
 
                 let new_state = State(has_received_hello: True, sequence: 0)
@@ -83,7 +84,7 @@ pub fn main(token: String, event_handlers: List(event_handler.EventHandler)) {
                 actor.continue(new_state)
               }
               True -> {
-                event_handler.handle_event(msg, event_handlers)
+                event_handler.handle_event(bot, msg, event_handlers)
 
                 actor.continue(state)
               }

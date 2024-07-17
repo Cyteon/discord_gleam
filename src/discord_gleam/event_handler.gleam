@@ -1,3 +1,4 @@
+import discord_gleam/types/bot
 import discord_gleam/ws/packets/generic
 import discord_gleam/ws/packets/message
 import discord_gleam/ws/packets/ready
@@ -5,7 +6,7 @@ import gleam/list
 import gleam/result
 
 pub type EventHandler =
-  fn(Packet) -> Nil
+  fn(bot.Bot, Packet) -> Nil
 
 pub type Packet {
   MessagePacket(message.MessagePacket)
@@ -13,10 +14,14 @@ pub type Packet {
   UnknownPacket(generic.GenericPacket)
 }
 
-pub fn handle_event(msg: String, handlers: List(EventHandler)) -> Nil {
+pub fn handle_event(
+  bot: bot.Bot,
+  msg: String,
+  handlers: List(EventHandler),
+) -> Nil {
   let packet = decode_packet(msg)
 
-  list.each(handlers, fn(handler) { handler(packet) })
+  list.each(handlers, fn(handler) { handler(bot, packet) })
 }
 
 fn decode_packet(msg: String) -> Packet {

@@ -31,8 +31,8 @@ pub fn string_to_data(encoded: String) -> Result(MessagePacket, String) {
         of: dynamic.decode4(
           MessagePacketData,
           dynamic.field("content", of: dynamic.string),
-          dynamic.field("channel_id", of: dynamic.string),
           dynamic.field("guild_id", of: dynamic.string),
+          dynamic.field("channel_id", of: dynamic.string),
           dynamic.field(
             "author",
             of: dynamic.decode2(

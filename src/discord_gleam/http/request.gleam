@@ -9,7 +9,7 @@ pub fn new(method: http.Method, path: String) -> request.Request(String) {
   |> request.prepend_header("accept", "application/json")
   |> request.prepend_header(
     "User-Agent",
-    "DiscordBot using Gleam and cyteon/discord_gleam",
+    "DiscordBot (https://github.com/cyteon/discord_gleam, 0.0.0)",
   )
 }
 
@@ -21,4 +21,17 @@ pub fn new_auth(
 ) -> request.Request(String) {
   new(method, path)
   |> request.prepend_header("Authorization", "Bot " <> token)
+}
+
+/// We have this to send post requests with token authentication
+pub fn new_auth_post(
+  method: http.Method,
+  path: String,
+  token: String,
+  data: String,
+) -> request.Request(String) {
+  new(method, path)
+  |> request.prepend_header("Authorization", "Bot " <> token)
+  |> request.set_body(data)
+  |> request.prepend_header("Content-Type", "application/json")
 }
