@@ -1,3 +1,4 @@
+import discord_gleam/event_handler
 import discord_gleam/ws/packets/hello
 import discord_gleam/ws/packets/identify
 import gleam/erlang/process
@@ -20,7 +21,7 @@ pub type State {
   State(has_received_hello: Bool, sequence: Int)
 }
 
-pub fn main(token: String) {
+pub fn main(token: String, event_handlers: List(event_handler.EventHandler)) {
   logging.log(logging.Debug, "Requesting gateway")
 
   let req =
@@ -82,6 +83,8 @@ pub fn main(token: String) {
                 actor.continue(new_state)
               }
               True -> {
+                event_handler.handle_event(msg, event_handlers)
+
                 actor.continue(state)
               }
             }

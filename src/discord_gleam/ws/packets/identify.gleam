@@ -18,7 +18,7 @@ pub fn create_packet(token: String) -> String {
       op: 2,
       d: IndentifyData(
         token,
-        513,
+        33_281,
         IdentifyProperties("unix", "discord_gleam", "discord_gleam"),
       ),
     )
