@@ -1,10 +1,10 @@
 name = "discord_gleam"
-version = "0.0.1"
+version = "0.0.2"
 
 # Fill out these fields if you intend to generate HTML documentation or publish
 # your project to the Hex package manager.
 #
-description = "discord_gleam is a library for making discord bots in gleam (pre alpha, development, not ready for use)"
+description = "discord_gleam is a library for making discord bots in gleam (basic commands only)"
 licences = ["MIT"]
 repository = { type = "github", user = "cyteon", repo = "discord_gleam" }
 # links = [{ title = "Website", href = "" }]
