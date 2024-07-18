@@ -34,3 +34,12 @@ pub fn kick_member(
 ) -> #(String, String) {
   endpoints.kick_member(bot.token, guild_id, user_id, reason)
 }
+
+pub fn ban_member(
+  bot: bot.Bot,
+  guild_id: String,
+  user_id: String,
+  reason: String,
+) -> #(String, String) {
+  endpoints.ban_member(bot.token, guild_id, user_id, reason)
+}

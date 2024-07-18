@@ -2,10 +2,9 @@ import discord_gleam/discord/snowflake.{type Snowflake}
 import discord_gleam/internal/error
 import gleam/dynamic
 import gleam/json
+import gleam/option.{type Option}
 import gleam/result
 import gleam/string
-
-import gleam/option.{type Option}
 
 /// User object containing PartialUser and FullUser
 pub type User {

@@ -114,3 +114,41 @@ pub fn kick_member(
     }
   }
 }
+
+pub fn ban_member(
+  token: String,
+  guild_id: String,
+  user_id: String,
+  reason: String,
+) -> #(String, String) {
+  let request =
+    request.new_auth_with_header(
+      http.Put,
+      "/guilds/" <> guild_id <> "/bans/" <> user_id,
+      token,
+      #("X-Audit-Log-Reason", reason),
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        204 -> {
+          logging.log(logging.Debug, "Banned member")
+          #("OK", resp.body)
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to ban member")
+          io.debug(resp.body)
+
+          #("FAILED", resp.body)
+        }
+      }
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to ban member: ")
+      io.debug(err)
+
+      #("FAILED", "ERROR")
+    }
+  }
+}
