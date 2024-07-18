@@ -53,7 +53,18 @@ pub fn send_message(
     )
   case hackney.send(request) {
     Ok(resp) -> {
-      io.debug(resp)
+      case resp.status {
+        200 -> {
+          logging.log(logging.Debug, "Message sent")
+          Nil
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to send message")
+          io.debug(resp.body)
+
+          Nil
+        }
+      }
 
       Nil
     }
@@ -62,6 +73,44 @@ pub fn send_message(
       io.debug(err)
 
       Nil
+    }
+  }
+}
+
+pub fn kick_member(
+  token: String,
+  guild_id: String,
+  user_id: String,
+  reason: String,
+) -> #(String, String) {
+  let request =
+    request.new_auth_with_header(
+      http.Delete,
+      "/guilds/" <> guild_id <> "/members/" <> user_id,
+      token,
+      #("X-Audit-Log-Reason", reason),
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        204 -> {
+          logging.log(logging.Debug, "Kicked member")
+          #("OK", resp.body)
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to kick member")
+          io.debug(resp.body)
+
+          #("FAILED", resp.body)
+        }
+      }
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to kick member: ")
+      io.debug(err)
+
+      #("FAILED", "ERROR")
     }
   }
 }

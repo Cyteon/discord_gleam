@@ -1,5 +1,6 @@
 import gleam/http
 import gleam/http/request
+import gleam/list
 
 pub fn new(method: http.Method, path: String) -> request.Request(String) {
   request.new()
@@ -34,4 +35,15 @@ pub fn new_auth_post(
   |> request.prepend_header("Authorization", "Bot " <> token)
   |> request.set_body(data)
   |> request.prepend_header("Content-Type", "application/json")
+}
+
+/// Some endpoints requires token authentication
+pub fn new_auth_with_header(
+  method: http.Method,
+  path: String,
+  token: String,
+  header: #(String, String),
+) -> request.Request(String) {
+  new_auth(method, path, token)
+  |> request.set_header(header.0, header.1)
 }

@@ -21,3 +21,19 @@ Further documentation can be found at <https://hexdocs.pm/discord_gleam>.
 ```sh
 gleam test  # Run the tests
 ```
+
+## Features:
+| Feature | Status |
+| --- | --- |
+| Basic events      | ✅ |
+| More events       | 📆 |
+| Sending messages  | ✅ |
+| Ban/kick          | 🔨 |
+| Embeds            | ✅ |
+| Slash commands    | 📆 |
+
+✅ - Done | 🔨 - In Progress | 📆 - Planned | ❌ - Not Planned
+
+## Supported events:
+- READY
+- MESSAGE_CREATE

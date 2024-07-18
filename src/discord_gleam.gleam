@@ -25,3 +25,12 @@ pub fn send_message(
 
   endpoints.send_message(bot.token, channel_id, msg)
 }
+
+pub fn kick_member(
+  bot: bot.Bot,
+  guild_id: String,
+  user_id: String,
+  reason: String,
+) -> #(String, String) {
+  endpoints.kick_member(bot.token, guild_id, user_id, reason)
+}
