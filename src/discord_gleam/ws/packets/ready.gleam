@@ -1,10 +1,11 @@
+import discord_gleam/discord/snowflake.{type Snowflake}
 import gleam/dynamic
 import gleam/json
 import gleam/result
 import logging
 
 pub type ReadyUser {
-  ReadyUser(username: String, id: String, discriminator: String, bot: Bool)
+  ReadyUser(username: String, id: Snowflake, discriminator: String, bot: Bool)
 }
 
 pub type ReadyData {
@@ -32,7 +33,7 @@ pub fn string_to_data(encoded: String) -> Result(ReadyPacket, String) {
             of: dynamic.decode4(
               ReadyUser,
               dynamic.field("username", of: dynamic.string),
-              dynamic.field("id", of: dynamic.string),
+              dynamic.field("id", of: snowflake.from_dynamic),
               dynamic.field("discriminator", of: dynamic.string),
               dynamic.field("bot", of: dynamic.bool),
             ),

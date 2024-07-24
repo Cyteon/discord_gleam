@@ -1,18 +1,19 @@
+import discord_gleam/discord/snowflake.{type Snowflake}
 import gleam/dynamic
 import gleam/json
 import gleam/result
 
 pub type MessageAuthor {
-  MessageAuthor(id: String, username: String)
+  MessageAuthor(id: Snowflake, username: String)
 }
 
 pub type MessagePacketData {
   MessagePacketData(
     content: String,
-    guild_id: String,
-    channel_id: String,
-    author: MessageAuthor,
     id: String,
+    guild_id: Snowflake,
+    channel_id: Snowflake,
+    author: MessageAuthor,
   )
 }
 
@@ -32,17 +33,17 @@ pub fn string_to_data(encoded: String) -> Result(MessagePacket, String) {
         of: dynamic.decode5(
           MessagePacketData,
           dynamic.field("content", of: dynamic.string),
-          dynamic.field("guild_id", of: dynamic.string),
-          dynamic.field("channel_id", of: dynamic.string),
+          dynamic.field("id", of: snowflake.from_dynamic),
+          dynamic.field("guild_id", of: snowflake.from_dynamic),
+          dynamic.field("channel_id", of: snowflake.from_dynamic),
           dynamic.field(
             "author",
             of: dynamic.decode2(
               MessageAuthor,
-              dynamic.field("id", of: dynamic.string),
+              dynamic.field("id", of: snowflake.from_dynamic),
               dynamic.field("username", of: dynamic.string),
             ),
           ),
-          dynamic.field("id", of: dynamic.string),
         ),
       ),
     )

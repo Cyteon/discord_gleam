@@ -1,9 +1,14 @@
+import discord_gleam/discord/snowflake.{type Snowflake}
 import gleam/dynamic
 import gleam/json
 import gleam/result
 
 pub type MessageDeletePacketData {
-  MessageDeletePacketData(id: String, guild_id: String, channel_id: String)
+  MessageDeletePacketData(
+    id: Snowflake,
+    guild_id: Snowflake,
+    channel_id: Snowflake,
+  )
 }
 
 pub type MessageDeletePacket {
@@ -21,9 +26,9 @@ pub fn string_to_data(encoded: String) -> Result(MessageDeletePacket, String) {
         "d",
         of: dynamic.decode3(
           MessageDeletePacketData,
-          dynamic.field("id", of: dynamic.string),
-          dynamic.field("guild_id", of: dynamic.string),
-          dynamic.field("channel_id", of: dynamic.string),
+          dynamic.field("id", of: snowflake.from_dynamic),
+          dynamic.field("guild_id", of: snowflake.from_dynamic),
+          dynamic.field("channel_id", of: snowflake.from_dynamic),
         ),
       ),
     )
