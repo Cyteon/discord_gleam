@@ -43,3 +43,12 @@ pub fn ban_member(
 ) -> #(String, String) {
   endpoints.ban_member(bot.token, guild_id, user_id, reason)
 }
+
+pub fn delete_message(
+  bot: bot.Bot,
+  channel_id: String,
+  message_id: String,
+  reason: String,
+) -> #(String, String) {
+  endpoints.delete_message(bot.token, channel_id, message_id, reason)
+}

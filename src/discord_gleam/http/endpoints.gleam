@@ -152,3 +152,41 @@ pub fn ban_member(
     }
   }
 }
+
+pub fn delete_message(
+  token: String,
+  channel_id: String,
+  message_id: String,
+  reason: String,
+) -> #(String, String) {
+  let request =
+    request.new_auth_with_header(
+      http.Delete,
+      "/channels/" <> channel_id <> "/messages/" <> message_id,
+      token,
+      #("X-Audit-Log-Reason", reason),
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        204 -> {
+          logging.log(logging.Debug, "Deleted Message")
+          #("OK", resp.body)
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to delete message")
+          io.debug(resp.body)
+
+          #("FAILED", resp.body)
+        }
+      }
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to delete message")
+      io.debug(err)
+
+      #("FAILED", "ERROR")
+    }
+  }
+}

@@ -26,9 +26,10 @@ gleam test  # Run the tests
 | Feature | Status |
 | --- | --- |
 | Basic events      | ✅ |
-| More events       | 📆 |
+| More events       | 🔨 |
 | Sending messages  | ✅ |
-| Ban/kick          | 🔨 |
+| Ban/kick          | ✅ |
+| Deleting messages | ✅ |
 | Embeds            | ✅ |
 | Slash commands    | 📆 |
 
@@ -37,3 +38,4 @@ gleam test  # Run the tests
 ## Supported events:
 - READY
 - MESSAGE_CREATE
+- MESSAGE_DELETE

@@ -7,7 +7,7 @@ import logging
 
 pub fn main() {
   logging.configure()
-  logging.set_level(logging.Debug)
+  logging.set_level(logging.Info)
 
   let bot = discord_gleam.bot("YOUR TOKEN")
 

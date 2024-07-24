@@ -12,6 +12,7 @@ pub type MessagePacketData {
     guild_id: String,
     channel_id: String,
     author: MessageAuthor,
+    id: String,
   )
 }
 
@@ -28,7 +29,7 @@ pub fn string_to_data(encoded: String) -> Result(MessagePacket, String) {
       dynamic.field("op", of: dynamic.int),
       dynamic.field(
         "d",
-        of: dynamic.decode4(
+        of: dynamic.decode5(
           MessagePacketData,
           dynamic.field("content", of: dynamic.string),
           dynamic.field("guild_id", of: dynamic.string),
@@ -41,6 +42,7 @@ pub fn string_to_data(encoded: String) -> Result(MessagePacket, String) {
               dynamic.field("username", of: dynamic.string),
             ),
           ),
+          dynamic.field("id", of: dynamic.string),
         ),
       ),
     )

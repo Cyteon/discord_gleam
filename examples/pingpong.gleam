@@ -5,11 +5,11 @@ import gleam/list
 import gleam/string
 import logging
 
-pub fn main(token: String) {
+pub fn main() {
   logging.configure()
-  logging.set_level(logging.Debug)
+  logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot(token)
+  let bot = discord_gleam.bot("YOUR TOKEN")
 
   discord_gleam.run(bot, [event_handler])
 }

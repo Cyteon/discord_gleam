@@ -8,6 +8,7 @@ import gleam/function
 import gleam/http
 import gleam/http/request
 import gleam/int
+import gleam/io
 import gleam/option
 import gleam/otp/actor
 import logging
@@ -109,7 +110,9 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
         }
       },
     )
-    |> stratus.on_close(fn(_state) { logging.log(logging.Info, "oh noooo") })
+    |> stratus.on_close(fn(_) {
+      logging.log(logging.Error, "oh nyo, discord closed websocket :c")
+    })
 
   let assert Ok(subj) = stratus.initialize(builder)
 

@@ -1,6 +1,7 @@
 import discord_gleam
 import discord_gleam/event_handler
 import discord_gleam/types/message
+import discord_gleam/ws/packets/message_delete
 import gleam/list
 import gleam/string
 import logging
@@ -138,6 +139,10 @@ fn event_handler(bot, packet: event_handler.Packet) {
         }
         False -> Nil
       }
+    }
+    event_handler.MessageDeletePacket(deleted) -> {
+      logging.log(logging.Info, "Deleted message: " <> deleted.d.id)
+      Nil
     }
     _ -> Nil
   }
