@@ -7,11 +7,11 @@ import gleam/list
 import gleam/string
 import logging
 
-pub fn main(token: String) {
+pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot(token)
+  let bot = discord_gleam.bot("YOUR TOKEN")
 
   let test_cmd =
     slash_command.SlashCommand(
@@ -36,10 +36,7 @@ pub fn main(token: String) {
       options: [],
     )
 
-  discord_gleam.register_commands(bot, "1262338071874244650", [
-    test_cmd,
-    test_cmd2,
-  ])
+  discord_gleam.register_commands(bot, "YOUR BOT ID", [test_cmd, test_cmd2])
 
   discord_gleam.run(bot, [event_handler])
 }
