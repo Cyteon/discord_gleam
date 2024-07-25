@@ -1,6 +1,7 @@
 import discord_gleam
 import discord_gleam/event_handler
 import discord_gleam/types/message
+import discord_gleam/types/slash_command
 import discord_gleam/ws/packets/message_delete
 import gleam/list
 import gleam/string
@@ -11,6 +12,23 @@ pub fn main(token: String) {
   logging.set_level(logging.Debug)
 
   let bot = discord_gleam.bot(token)
+
+  let test_cmd =
+    slash_command.SlashCommand(
+      name: "test",
+      type_: 1,
+      description: "Test command",
+      options: [
+        slash_command.CommandOption(
+          name: "test",
+          description: "Test option",
+          type_: 3,
+          required: False,
+        ),
+      ],
+    )
+
+  discord_gleam.register_commands(bot, "1262338071874244650", [test_cmd])
 
   discord_gleam.run(bot, [event_handler])
 }
@@ -143,6 +161,18 @@ fn event_handler(bot, packet: event_handler.Packet) {
     event_handler.MessageDeletePacket(deleted) -> {
       logging.log(logging.Info, "Deleted message: " <> deleted.d.id)
       Nil
+    }
+    event_handler.InteractionCreate(interaction) -> {
+      logging.log(logging.Info, "Interaction: " <> interaction.d.data.name)
+
+      case interaction.d.data.name {
+        "test" -> {
+          discord_gleam.interaction_reply_message(interaction, "test")
+
+          Nil
+        }
+        _ -> Nil
+      }
     }
     _ -> Nil
   }

@@ -1,7 +1,9 @@
 import discord_gleam/http/request
 import discord_gleam/internal/error
 import discord_gleam/types/message
+import discord_gleam/types/slash_command
 import discord_gleam/types/user
+import discord_gleam/ws/packets/interaction_create
 import gleam/dynamic
 import gleam/hackney
 import gleam/http
@@ -184,6 +186,89 @@ pub fn delete_message(
     }
     Error(err) -> {
       logging.log(logging.Error, "Failed to delete message")
+      io.debug(err)
+
+      #("FAILED", "ERROR")
+    }
+  }
+}
+
+pub fn register_slash_command(
+  token: String,
+  client_id: String,
+  command: slash_command.SlashCommand,
+) -> #(String, String) {
+  let request =
+    request.new_auth_post(
+      http.Post,
+      "/applications/" <> client_id <> "/commands",
+      token,
+      slash_command.command_to_string(command),
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        201 -> {
+          logging.log(logging.Debug, "Added Slash Command " <> command.name)
+          #("OK", resp.body)
+        }
+        200 -> {
+          logging.log(logging.Debug, "Updated Slash Command " <> command.name)
+          #("OK", resp.body)
+        }
+        _ -> {
+          logging.log(
+            logging.Error,
+            "Failed to add Slash Command" <> command.name,
+          )
+          io.debug(resp.body)
+
+          #("FAILED", resp.body)
+        }
+      }
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to add Slash Command" <> command.name)
+      io.debug(err)
+
+      #("FAILED", "ERROR")
+    }
+  }
+}
+
+pub fn interaction_send_text(
+  interaction: interaction_create.InteractionCreate,
+  message: String,
+) -> #(String, String) {
+  let request =
+    request.new_post(
+      http.Post,
+      "/interactions/"
+        <> interaction.d.id
+        <> "/"
+        <> interaction.d.token
+        <> "/callback",
+      slash_command.make_basic_text_reply(message),
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        204 -> {
+          logging.log(logging.Debug, "Sent Interaction Response")
+          #("OK", resp.body)
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to send Interaction Response")
+          io.debug(resp.body)
+
+          #("FAILED", resp.body)
+        }
+      }
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Error when sending Interaction Response")
       io.debug(err)
 
       #("FAILED", "ERROR")

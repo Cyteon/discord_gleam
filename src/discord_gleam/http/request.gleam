@@ -14,6 +14,17 @@ pub fn new(method: http.Method, path: String) -> request.Request(String) {
   )
 }
 
+/// We have this to send post requests
+pub fn new_post(
+  method: http.Method,
+  path: String,
+  data: String,
+) -> request.Request(String) {
+  new(method, path)
+  |> request.set_body(data)
+  |> request.prepend_header("Content-Type", "application/json")
+}
+
 /// Some endpoints requires token authentication
 pub fn new_auth(
   method: http.Method,

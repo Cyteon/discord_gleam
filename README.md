@@ -39,3 +39,4 @@ gleam test  # Run the tests
 - READY
 - MESSAGE_CREATE
 - MESSAGE_DELETE
+- INTERACTION_CREATE

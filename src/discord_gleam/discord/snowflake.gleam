@@ -1,6 +1,7 @@
 import gleam/dynamic
 import gleam/int
 
+/// See https://discord.com/developers/docs/reference#snowflakes
 pub type Snowflake =
   String
 

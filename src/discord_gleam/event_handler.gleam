@@ -1,5 +1,6 @@
 import discord_gleam/types/bot
 import discord_gleam/ws/packets/generic
+import discord_gleam/ws/packets/interaction_create
 import discord_gleam/ws/packets/message
 import discord_gleam/ws/packets/message_delete
 import discord_gleam/ws/packets/ready
@@ -14,6 +15,7 @@ pub type Packet {
   ReadyPacket(ready.ReadyPacket)
   UnknownPacket(generic.GenericPacket)
   MessageDeletePacket(message_delete.MessageDeletePacket)
+  InteractionCreate(interaction_create.InteractionCreate)
 }
 
 pub fn handle_event(
@@ -40,6 +42,10 @@ fn decode_packet(msg: String) -> Packet {
     "MESSAGE_DELETE" ->
       message_delete.string_to_data(msg)
       |> result.map(MessageDeletePacket)
+      |> result.unwrap(UnknownPacket(generic_packet))
+    "INTERACTION_CREATE" ->
+      interaction_create.string_to_data(msg)
+      |> result.map(InteractionCreate)
       |> result.unwrap(UnknownPacket(generic_packet))
     _ -> UnknownPacket(generic_packet)
   }
