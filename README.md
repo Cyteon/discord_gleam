@@ -25,13 +25,13 @@ gleam test  # Run the tests
 ## Features:
 | Feature | Status |
 | --- | --- |
-| Basic events      | ✅ |
-| More events       | 🔨 |
-| Sending messages  | ✅ |
-| Ban/kick          | ✅ |
-| Deleting messages | ✅ |
-| Embeds            | ✅ |
-| Slash commands    | 📆 |
+| Basic events         | ✅ |
+| More events          | 🔨 |
+| Sending messages     | ✅ |
+| Ban/kick             | ✅ |
+| Deleting messages    | ✅ |
+| Embeds               | ✅ |
+| BasicSlash commands  | ✅ |
 
 ✅ - Done | 🔨 - In Progress | 📆 - Planned | ❌ - Not Planned
 
