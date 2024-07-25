@@ -31,7 +31,7 @@ gleam test  # Run the tests
 | Ban/kick             | ✅ |
 | Deleting messages    | ✅ |
 | Embeds               | ✅ |
-| BasicSlash commands  | ✅ |
+| Basic Slash commands | ✅ |
 
 ✅ - Done | 🔨 - In Progress | 📆 - Planned | ❌ - Not Planned
 
