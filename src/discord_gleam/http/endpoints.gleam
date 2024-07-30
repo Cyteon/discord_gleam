@@ -193,6 +193,42 @@ pub fn delete_message(
   }
 }
 
+pub fn wipe_slash_commands(
+  token: String,
+  client_id: String,
+) -> #(String, String) {
+  let request =
+    request.new_auth_post(
+      http.Put,
+      "/applications/" <> client_id <> "/commands",
+      token,
+      "{}",
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        200 -> {
+          logging.log(logging.Debug, "Wiped Slash Commands")
+          #("OK", resp.body)
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to wipe Slash Commands")
+          io.debug(resp.body)
+
+          #("FAILED", resp.body)
+        }
+      }
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to wipe Slash Commands")
+      io.debug(err)
+
+      #("FAILED", "ERROR")
+    }
+  }
+}
+
 pub fn register_slash_command(
   token: String,
   client_id: String,

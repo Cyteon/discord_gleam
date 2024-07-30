@@ -28,6 +28,7 @@ pub fn main(token: String, client_id: String) {
       ],
     )
 
+  discord_gleam.wipe_slash_commands(bot, client_id)
   discord_gleam.register_commands(bot, client_id, [test_cmd])
 
   discord_gleam.run(bot, [event_handler])

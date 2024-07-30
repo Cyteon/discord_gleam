@@ -56,6 +56,10 @@ pub fn delete_message(
   endpoints.delete_message(bot.token, channel_id, message_id, reason)
 }
 
+pub fn wipe_slash_commands(bot: bot.Bot, client_id: String) -> #(String, String) {
+  endpoints.wipe_slash_commands(bot.token, client_id)
+}
+
 pub fn register_commands(
   bot: bot.Bot,
   client_id: String,
@@ -69,6 +73,6 @@ pub fn register_commands(
 pub fn interaction_reply_message(
   interaction: interaction_create.InteractionCreate,
   message: String,
-) {
+) -> #(String, String) {
   endpoints.interaction_send_text(interaction, message)
 }
