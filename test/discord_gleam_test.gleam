@@ -1,10 +1,25 @@
 import example_bot
 import gleam/erlang/os
 import gleam/io
+import gleam/result
 
 pub fn main() {
-  case os.get_env("TEST_BOT_TOKEN") {
-    Ok(token) -> example_bot.main(token)
-    Error(_) -> io.println("Token not found :c")
+  case
+    {
+      use token <- result.try(get_env("TEST_BOT_TOKEN"))
+      use client_id <- result.try(get_env("TEST_BOT_CLIENT_ID"))
+
+      Ok(example_bot.main(token, client_id))
+    }
+  {
+    Ok(_) -> Nil
+    Error(msg) -> io.println(msg)
+  }
+}
+
+fn get_env(var: String) -> Result(String, String) {
+  case os.get_env(var) {
+    Ok(value) -> Ok(value)
+    Error(_) -> Error("Environment variable " <> var <> " not found")
   }
 }

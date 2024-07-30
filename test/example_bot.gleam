@@ -7,7 +7,7 @@ import gleam/list
 import gleam/string
 import logging
 
-pub fn main(token: String) {
+pub fn main(token: String, client_id: String) {
   logging.configure()
   logging.set_level(logging.Debug)
 
@@ -28,7 +28,7 @@ pub fn main(token: String) {
       ],
     )
 
-  discord_gleam.register_commands(bot, "1262338071874244650", [test_cmd])
+  discord_gleam.register_commands(bot, client_id, [test_cmd])
 
   discord_gleam.run(bot, [event_handler])
 }
