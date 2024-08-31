@@ -1,6 +1,7 @@
 import discord_gleam/http/request
 import discord_gleam/internal/error
 import discord_gleam/types/message
+import discord_gleam/types/reply
 import discord_gleam/types/slash_command
 import discord_gleam/types/user
 import discord_gleam/ws/packets/interaction_create
@@ -72,6 +73,45 @@ pub fn send_message(
     }
     Error(err) -> {
       logging.log(logging.Error, "Failed to send message: ")
+      io.debug(err)
+
+      Nil
+    }
+  }
+}
+
+pub fn reply(token: String, channel_id: String, message: reply.Reply) -> Nil {
+  let data = reply.to_string(message)
+  io.debug(data)
+
+  logging.log(logging.Debug, "Replying: " <> data)
+
+  let request =
+    request.new_auth_post(
+      http.Post,
+      "/channels/" <> channel_id <> "/messages",
+      token,
+      data,
+    )
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        200 -> {
+          logging.log(logging.Debug, "Reply sent")
+          Nil
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to send reply")
+          io.debug(resp.body)
+
+          Nil
+        }
+      }
+
+      Nil
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to send reply: ")
       io.debug(err)
 
       Nil
