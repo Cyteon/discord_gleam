@@ -2,6 +2,7 @@ import discord_gleam/event_handler
 import discord_gleam/http/endpoints
 import discord_gleam/types/bot
 import discord_gleam/types/message
+import discord_gleam/types/reply
 import discord_gleam/types/slash_command
 import discord_gleam/ws/event_loop
 import discord_gleam/ws/packets/interaction_create
@@ -27,6 +28,19 @@ pub fn send_message(
   let msg = message.Message(content: message, embeds: embeds)
 
   endpoints.send_message(bot.token, channel_id, msg)
+}
+
+pub fn reply(
+  bot: bot.Bot,
+  channel_id: String,
+  message_id: String,
+  message: String,
+  embeds: List(message.Embed),
+) -> Nil {
+  let msg =
+    reply.Reply(content: message, message_id: message_id, embeds: embeds)
+
+  endpoints.reply(bot.token, channel_id, msg)
 }
 
 pub fn kick_member(
