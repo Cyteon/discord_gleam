@@ -60,11 +60,16 @@ fn event_handler(bot, packet: event_handler.Packet) {
           ])
         }
         "!reply" -> {
-          discord_gleam.reply(bot, message.d.channel_id, message.d.id, "Reply!", [])
+          discord_gleam.reply(
+            bot,
+            message.d.channel_id,
+            message.d.id,
+            "Reply!",
+            [],
+          )
         }
         _ -> Nil
       }
-
 
       case string.starts_with(message.d.content, "!kick ") {
         True -> {
