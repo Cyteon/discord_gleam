@@ -6,6 +6,7 @@
 ```sh
 gleam add discord_gleam
 ```
+
 ```gleam
 import discord_gleam
 import discord_gleam/event_handler
@@ -48,19 +49,21 @@ gleam test  # Run the tests
 ```
 
 ## Features:
-| Feature | Status |
-| --- | --- |
-| Basic events         | ✅ |
-| More events          | 🔨 |
-| Sending messages     | ✅ |
-| Ban/kick             | ✅ |
-| Deleting messages    | ✅ |
-| Embeds               | ✅ |
-| Basic Slash commands | ✅ |
+
+| Feature              | Status |
+| -------------------- | ------ |
+| Basic events         | ✅     |
+| More events          | 🔨     |
+| Sending messages     | ✅     |
+| Ban/kick             | ✅     |
+| Deleting messages    | ✅     |
+| Embeds               | ✅     |
+| Basic Slash commands | ✅     |
 
 ✅ - Done | 🔨 - In Progress | 📆 - Planned | ❌ - Not Planned
 
 ## Supported events:
+
 - READY
 - MESSAGE_CREATE
 - MESSAGE_DELETE
