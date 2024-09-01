@@ -47,14 +47,14 @@ pub fn make_basic_text_reply(message: String, ephemeral: Bool) -> String {
   let data = BasicResponseData(content: message)
   let response = BasicResponse(type_: 4, data: data)
 
-  let flags = case ephemeral {
+  let callback_data = case ephemeral {
     True -> [#("content", json.string(data.content)), #("flags", json.int(64))]
     False -> [#("content", json.string(data.content))]
   }
 
   json.object([
     #("type", json.int(response.type_)),
-    #("data", json.object(flags)),
+    #("data", json.object(callback_data)),
   ])
   |> json.to_string
 }
