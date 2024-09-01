@@ -109,6 +109,7 @@ pub fn register_guild_commands(
 pub fn interaction_reply_message(
   interaction: interaction_create.InteractionCreate,
   message: String,
+  ephemeral: Bool,
 ) -> #(String, String) {
-  endpoints.interaction_send_text(interaction, message)
+  endpoints.interaction_send_text(interaction, message, ephemeral)
 }

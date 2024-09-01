@@ -398,6 +398,7 @@ pub fn register_guild_command(
 pub fn interaction_send_text(
   interaction: interaction_create.InteractionCreate,
   message: String,
+  ephemeral: Bool,
 ) -> #(String, String) {
   let request =
     request.new_post(
@@ -407,7 +408,7 @@ pub fn interaction_send_text(
         <> "/"
         <> interaction.d.token
         <> "/callback",
-      slash_command.make_basic_text_reply(message),
+      slash_command.make_basic_text_reply(message, ephemeral),
     )
 
   case hackney.send(request) {

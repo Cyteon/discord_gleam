@@ -2,7 +2,6 @@ import discord_gleam
 import discord_gleam/event_handler
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
-import discord_gleam/ws/packets/message_delete
 import gleam/list
 import gleam/string
 import logging
@@ -180,7 +179,8 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
       case interaction.d.data.name {
         "test" -> {
-          discord_gleam.interaction_reply_message(interaction, "test")
+          discord_gleam.interaction_reply_message(interaction, "test", True)
+          discord_gleam.interaction_reply_message(interaction, "test", False)
 
           Nil
         }
