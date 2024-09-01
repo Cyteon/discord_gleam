@@ -36,7 +36,11 @@ pub fn main() {
       options: [],
     )
 
-  discord_gleam.register_commands(bot, "YOUR BOT ID", [test_cmd, test_cmd2])
+  discord_gleam.register_global_commands(bot, "YOUR BOT ID", [test_cmd])
+
+  discord_gleam.register_guild_commands(bot, "YOUR BOT ID", "YOUR GUILD ID", [
+    test_cmd2,
+  ])
 
   discord_gleam.run(bot, [event_handler])
 }
@@ -53,12 +57,12 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
       case interaction.d.data.name {
         "ping" -> {
-          discord_gleam.interaction_reply_message(interaction, "pong")
+          discord_gleam.interaction_reply_message(interaction, "pong", False)
 
           Nil
         }
         "pong" -> {
-          discord_gleam.interaction_reply_message(interaction, "ping")
+          discord_gleam.interaction_reply_message(interaction, "ping", False)
 
           Nil
         }

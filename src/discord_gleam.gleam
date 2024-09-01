@@ -70,23 +70,46 @@ pub fn delete_message(
   endpoints.delete_message(bot.token, channel_id, message_id, reason)
 }
 
-pub fn wipe_slash_commands(bot: bot.Bot, client_id: String) -> #(String, String) {
-  endpoints.wipe_slash_commands(bot.token, client_id)
+pub fn wipe_global_commands(
+  bot: bot.Bot,
+  client_id: String,
+) -> #(String, String) {
+  endpoints.wipe_global_commands(bot.token, client_id)
 }
 
-pub fn register_commands(
+pub fn wipe_guild_commands(
+  bot: bot.Bot,
+  client_id: String,
+  guild_id: String,
+) -> #(String, String) {
+  endpoints.wipe_guild_commands(bot.token, client_id, guild_id)
+}
+
+pub fn register_global_commands(
   bot: bot.Bot,
   client_id: String,
   commands: List(slash_command.SlashCommand),
 ) {
   list.each(commands, fn(command) {
-    endpoints.register_slash_command(bot.token, client_id, command)
+    endpoints.register_global_command(bot.token, client_id, command)
+  })
+}
+
+pub fn register_guild_commands(
+  bot: bot.Bot,
+  client_id: String,
+  guild_id: String,
+  commands: List(slash_command.SlashCommand),
+) {
+  list.each(commands, fn(command) {
+    endpoints.register_guild_command(bot.token, client_id, guild_id, command)
   })
 }
 
 pub fn interaction_reply_message(
   interaction: interaction_create.InteractionCreate,
   message: String,
+  ephemeral: Bool,
 ) -> #(String, String) {
-  endpoints.interaction_send_text(interaction, message)
+  endpoints.interaction_send_text(interaction, message, ephemeral)
 }

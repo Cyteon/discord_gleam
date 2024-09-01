@@ -8,8 +8,9 @@ pub fn main() {
     {
       use token <- result.try(get_env("TEST_BOT_TOKEN"))
       use client_id <- result.try(get_env("TEST_BOT_CLIENT_ID"))
+      use guild_id <- result.try(get_env("TEST_BOT_GUILD_ID"))
 
-      Ok(example_bot.main(token, client_id))
+      Ok(example_bot.main(token, client_id, guild_id))
     }
   {
     Ok(_) -> Nil

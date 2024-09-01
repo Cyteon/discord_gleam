@@ -233,7 +233,7 @@ pub fn delete_message(
   }
 }
 
-pub fn wipe_slash_commands(
+pub fn wipe_global_commands(
   token: String,
   client_id: String,
 ) -> #(String, String) {
@@ -249,11 +249,11 @@ pub fn wipe_slash_commands(
     Ok(resp) -> {
       case resp.status {
         200 -> {
-          logging.log(logging.Debug, "Wiped Slash Commands")
+          logging.log(logging.Debug, "Wiped global commands")
           #("OK", resp.body)
         }
         _ -> {
-          logging.log(logging.Error, "Failed to wipe Slash Commands")
+          logging.log(logging.Error, "Failed to wipe global commands")
           io.debug(resp.body)
 
           #("FAILED", resp.body)
@@ -261,7 +261,7 @@ pub fn wipe_slash_commands(
       }
     }
     Error(err) -> {
-      logging.log(logging.Error, "Failed to wipe Slash Commands")
+      logging.log(logging.Error, "Failed to wipe global commands")
       io.debug(err)
 
       #("FAILED", "ERROR")
@@ -269,7 +269,44 @@ pub fn wipe_slash_commands(
   }
 }
 
-pub fn register_slash_command(
+pub fn wipe_guild_commands(
+  token: String,
+  client_id: String,
+  guild_id: String,
+) -> #(String, String) {
+  let request =
+    request.new_auth_post(
+      http.Put,
+      "/applications/" <> client_id <> "/guilds/" <> guild_id <> "/commands",
+      token,
+      "{}",
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        200 -> {
+          logging.log(logging.Debug, "Wiped guild commands")
+          #("OK", resp.body)
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to wipe guild commands")
+          io.debug(resp.body)
+
+          #("FAILED", resp.body)
+        }
+      }
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to wipe guild commands")
+      io.debug(err)
+
+      #("FAILED", "ERROR")
+    }
+  }
+}
+
+pub fn register_global_command(
   token: String,
   client_id: String,
   command: slash_command.SlashCommand,
@@ -286,17 +323,17 @@ pub fn register_slash_command(
     Ok(resp) -> {
       case resp.status {
         201 -> {
-          logging.log(logging.Debug, "Added Slash Command " <> command.name)
+          logging.log(logging.Debug, "Added global command " <> command.name)
           #("OK", resp.body)
         }
         200 -> {
-          logging.log(logging.Debug, "Updated Slash Command " <> command.name)
+          logging.log(logging.Debug, "Updated global command " <> command.name)
           #("OK", resp.body)
         }
         _ -> {
           logging.log(
             logging.Error,
-            "Failed to add Slash Command" <> command.name,
+            "Failed to add global command" <> command.name,
           )
           io.debug(resp.body)
 
@@ -305,7 +342,52 @@ pub fn register_slash_command(
       }
     }
     Error(err) -> {
-      logging.log(logging.Error, "Failed to add Slash Command" <> command.name)
+      logging.log(logging.Error, "Failed to add global command" <> command.name)
+      io.debug(err)
+
+      #("FAILED", "ERROR")
+    }
+  }
+}
+
+pub fn register_guild_command(
+  token: String,
+  client_id: String,
+  guild_id: String,
+  command: slash_command.SlashCommand,
+) -> #(String, String) {
+  let request =
+    request.new_auth_post(
+      http.Post,
+      "/applications/" <> client_id <> "/guilds/" <> guild_id <> "/commands",
+      token,
+      slash_command.command_to_string(command),
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        201 -> {
+          logging.log(logging.Debug, "Added guild command " <> command.name)
+          #("OK", resp.body)
+        }
+        200 -> {
+          logging.log(logging.Debug, "Updated guild command " <> command.name)
+          #("OK", resp.body)
+        }
+        _ -> {
+          logging.log(
+            logging.Error,
+            "Failed to add guild command" <> command.name,
+          )
+          io.debug(resp.body)
+
+          #("FAILED", resp.body)
+        }
+      }
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to add guild command" <> command.name)
       io.debug(err)
 
       #("FAILED", "ERROR")
@@ -316,6 +398,7 @@ pub fn register_slash_command(
 pub fn interaction_send_text(
   interaction: interaction_create.InteractionCreate,
   message: String,
+  ephemeral: Bool,
 ) -> #(String, String) {
   let request =
     request.new_post(
@@ -325,7 +408,7 @@ pub fn interaction_send_text(
         <> "/"
         <> interaction.d.token
         <> "/callback",
-      slash_command.make_basic_text_reply(message),
+      slash_command.make_basic_text_reply(message, ephemeral),
     )
 
   case hackney.send(request) {
