@@ -27,11 +27,26 @@ pub fn main(token: String, client_id: String, guild_id: String) {
       ],
     )
 
+  let test_cmd2 =
+    slash_command.SlashCommand(
+      name: "test2",
+      type_: 1,
+      description: "Test command",
+      options: [
+        slash_command.CommandOption(
+          name: "test",
+          description: "Test option",
+          type_: 3,
+          required: False,
+        ),
+      ],
+    )
+
   discord_gleam.wipe_global_commands(bot, client_id)
   discord_gleam.register_global_commands(bot, client_id, [test_cmd])
 
   discord_gleam.wipe_guild_commands(bot, client_id, guild_id)
-  discord_gleam.register_guild_commands(bot, client_id, guild_id, [test_cmd])
+  discord_gleam.register_guild_commands(bot, client_id, guild_id, [test_cmd2])
 
   discord_gleam.run(bot, [event_handler])
 }
@@ -180,7 +195,11 @@ fn event_handler(bot, packet: event_handler.Packet) {
       case interaction.d.data.name {
         "test" -> {
           discord_gleam.interaction_reply_message(interaction, "test", True)
-          discord_gleam.interaction_reply_message(interaction, "test", False)
+
+          Nil
+        }
+        "test2" -> {
+          discord_gleam.interaction_reply_message(interaction, "test2", False)
 
           Nil
         }
