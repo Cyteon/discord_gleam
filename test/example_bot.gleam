@@ -7,7 +7,7 @@ import gleam/list
 import gleam/string
 import logging
 
-pub fn main(token: String, client_id: String) {
+pub fn main(token: String, client_id: String, guild_id: String) {
   logging.configure()
   logging.set_level(logging.Debug)
 
@@ -28,8 +28,11 @@ pub fn main(token: String, client_id: String) {
       ],
     )
 
-  discord_gleam.wipe_slash_commands(bot, client_id)
-  discord_gleam.register_commands(bot, client_id, [test_cmd])
+  discord_gleam.wipe_global_commands(bot, client_id)
+  discord_gleam.register_global_commands(bot, client_id, [test_cmd])
+
+  discord_gleam.wipe_guild_commands(bot, client_id, guild_id)
+  discord_gleam.register_guild_commands(bot, client_id, guild_id, [test_cmd])
 
   discord_gleam.run(bot, [event_handler])
 }

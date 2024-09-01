@@ -36,7 +36,11 @@ pub fn main() {
       options: [],
     )
 
-  discord_gleam.register_commands(bot, "YOUR BOT ID", [test_cmd, test_cmd2])
+  discord_gleam.register_global_commands(bot, "YOUR BOT ID", [test_cmd])
+
+  discord_gleam.register_guild_commands(bot, "YOUR BOT ID", "YOUR GUILD ID", [
+    test_cmd2,
+  ])
 
   discord_gleam.run(bot, [event_handler])
 }
