@@ -59,6 +59,8 @@ gleam test  # Run the tests
 | Deleting messages    | ✅     |
 | Embeds               | ✅     |
 | Basic Slash commands | ✅     |
+| Cache                | 📆     |
+| Intents              | 📆     |
 
 ✅ - Done | 🔨 - In Progress | 📆 - Planned | ❌ - Not Planned
 
