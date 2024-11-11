@@ -1,23 +1,24 @@
-import discord_gleam/discord/intents
 import bravo/uset
-import discord_gleam/types/bot
 import discord_gleam
+import discord_gleam/discord/intents
 import discord_gleam/event_handler
+import discord_gleam/types/bot
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
 import gleam/list
-import gleam/string
 import gleam/option
+import gleam/string
 import logging
 
 pub fn main(token: String, client_id: String, guild_id: String) {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot(token, intents.Intents(
-    message_content: True,
-    guild_messages: True,
-  ))
+  let bot =
+    discord_gleam.bot(
+      token,
+      intents.Intents(message_content: True, guild_messages: True),
+    )
 
   let test_cmd =
     slash_command.SlashCommand(
@@ -201,7 +202,10 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
           case msg {
             Ok(msg) -> {
-              logging.log(logging.Info, "Deleted message: " <> msg.1.content)
+              logging.log(
+                logging.Info,
+                "Deleted message: " <> { msg.1 }.content,
+              )
             }
             Error(_) -> {
               logging.log(logging.Info, "Deleted message not found")

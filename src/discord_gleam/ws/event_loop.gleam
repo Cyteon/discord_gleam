@@ -116,11 +116,11 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
   let assert Ok(subj) = stratus.initialize(builder)
 
   process.new_selector()
-    |> process.selecting_process_down(
-      process.monitor_process(process.subject_owner(subj)),
-      function.identity,
-    )
-    |> process.select_forever
+  |> process.selecting_process_down(
+    process.monitor_process(process.subject_owner(subj)),
+    function.identity,
+  )
+  |> process.select_forever
 
   process.sleep(10_000)
 

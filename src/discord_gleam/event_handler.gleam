@@ -1,3 +1,4 @@
+import bravo/uset.{type USet}
 import discord_gleam/types/bot
 import discord_gleam/ws/packets/generic
 import discord_gleam/ws/packets/interaction_create
@@ -7,7 +8,6 @@ import discord_gleam/ws/packets/ready
 import gleam/list
 import gleam/option
 import gleam/result
-import bravo/uset.{type USet}
 
 pub type EventHandler =
   fn(bot.Bot, Packet) -> Nil
@@ -20,11 +20,7 @@ pub type Packet {
   InteractionCreate(interaction_create.InteractionCreate)
 }
 
-fn internal_handler(
-  bot: bot.Bot,
-  packet: Packet,
-) -> Nil {
-
+fn internal_handler(bot: bot.Bot, packet: Packet) -> Nil {
   case packet {
     MessagePacket(msg) -> {
       case bot.cache.messages {
