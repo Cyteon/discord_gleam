@@ -8,7 +8,6 @@ import gleam/function
 import gleam/http
 import gleam/http/request
 import gleam/int
-import gleam/io
 import gleam/option
 import gleam/otp/actor
 import logging
@@ -116,8 +115,7 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
 
   let assert Ok(subj) = stratus.initialize(builder)
 
-  let done =
-    process.new_selector()
+  process.new_selector()
     |> process.selecting_process_down(
       process.monitor_process(process.subject_owner(subj)),
       function.identity,

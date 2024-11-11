@@ -3,6 +3,7 @@
 
 packages = [
   { name = "birl", version = "1.7.1", build_tools = ["gleam"], requirements = ["gleam_stdlib", "ranger"], otp_app = "birl", source = "hex", outer_checksum = "5C66647D62BCB11FE327E7A6024907C4A17954EF22865FE0940B54A852446D01" },
+  { name = "bravo", version = "4.0.1", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_stdlib"], otp_app = "bravo", source = "hex", outer_checksum = "D450DCD5A896ADDE442A93A7D6B5B2785374579A35416819E29E024887C2A872" },
   { name = "certifi", version = "2.12.0", build_tools = ["rebar3"], requirements = [], otp_app = "certifi", source = "hex", outer_checksum = "EE68D85DF22E554040CDB4BE100F33873AC6051387BAF6A8F6CE82272340FF1C" },
   { name = "dotenv", version = "3.1.0", build_tools = ["mix"], requirements = [], otp_app = "dotenv", source = "hex", outer_checksum = "01BED84D21BEDD8739AEBAD16489A3CE12D19C2D59AF87377DA65EBB361980D3" },
   { name = "gleam_crypto", version = "1.3.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleam_crypto", source = "hex", outer_checksum = "ADD058DEDE8F0341F1ADE3AAC492A224F15700829D9A3A3F9ADF370F875C51B7" },
@@ -29,6 +30,7 @@ packages = [
 
 [requirements]
 birl = { version = ">= 1.7.1 and < 2.0.0" }
+bravo = { version = ">= 4.0.1 and < 5.0.0" }
 dotenv = { version = ">= 3.1.0 and < 4.0.0" }
 gleam_erlang = { version = ">= 0.25.0 and < 1.0.0" }
 gleam_hackney = { version = ">= 1.2.0 and < 2.0.0" }

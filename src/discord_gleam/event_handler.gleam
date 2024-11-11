@@ -5,7 +5,9 @@ import discord_gleam/ws/packets/message
 import discord_gleam/ws/packets/message_delete
 import discord_gleam/ws/packets/ready
 import gleam/list
+import gleam/option
 import gleam/result
+import bravo/uset.{type USet}
 
 pub type EventHandler =
   fn(bot.Bot, Packet) -> Nil
@@ -18,12 +20,40 @@ pub type Packet {
   InteractionCreate(interaction_create.InteractionCreate)
 }
 
+fn internal_handler(
+  bot: bot.Bot,
+  packet: Packet,
+) -> Nil {
+
+  case packet {
+    MessagePacket(msg) -> {
+      case bot.cache.messages {
+        option.Some(cache) -> {
+          uset.insert(cache, [#(msg.d.id, msg.d)])
+
+          Nil
+        }
+        option.None -> {
+          Nil
+        }
+      }
+      Nil
+    }
+    _ -> Nil
+  }
+}
+
 pub fn handle_event(
   bot: bot.Bot,
   msg: String,
   handlers: List(EventHandler),
 ) -> Nil {
   let packet = decode_packet(msg)
+
+  case packet {
+    UnknownPacket(_) -> Nil
+    _ -> internal_handler(bot, packet)
+  }
 
   list.each(handlers, fn(handler) { handler(bot, packet) })
 }

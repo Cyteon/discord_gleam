@@ -1,3 +1,4 @@
+import gleam/option
 import discord_gleam/event_handler
 import discord_gleam/http/endpoints
 import discord_gleam/types/bot
@@ -7,9 +8,19 @@ import discord_gleam/types/slash_command
 import discord_gleam/ws/event_loop
 import discord_gleam/ws/packets/interaction_create
 import gleam/list
+import bravo/uset
+import bravo
 
 pub fn bot(token: String) -> bot.Bot {
-  bot.Bot(token: token)
+  bot.Bot(
+    token: token,
+    cache: bot.Cache(
+      messages: case uset.new("MessagesCache", 1, bravo.Public) {
+          Ok(cache) -> option.Some(cache)
+          Error(_) -> option.None
+        }
+    ),
+  )
 }
 
 pub fn run(

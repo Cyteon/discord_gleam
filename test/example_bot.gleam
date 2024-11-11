@@ -1,14 +1,17 @@
+import bravo/uset
+import discord_gleam/types/bot
 import discord_gleam
 import discord_gleam/event_handler
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
 import gleam/list
 import gleam/string
+import gleam/option
 import logging
 
 pub fn main(token: String, client_id: String, guild_id: String) {
   logging.configure()
-  logging.set_level(logging.Debug)
+  logging.set_level(logging.Info)
 
   let bot = discord_gleam.bot(token)
 
@@ -187,6 +190,24 @@ fn event_handler(bot, packet: event_handler.Packet) {
     }
     event_handler.MessageDeletePacket(deleted) -> {
       logging.log(logging.Info, "Deleted message: " <> deleted.d.id)
+
+      case bot.cache.messages {
+        option.Some(cache) -> {
+          let msg = uset.lookup(cache, deleted.d.id)
+
+          case msg {
+            Ok(msg) -> {
+              logging.log(logging.Info, "Deleted message: " <> msg.1.content)
+            }
+            Error(_) -> {
+              logging.log(logging.Info, "Deleted message not found")
+            }
+          }
+
+          Nil
+        }
+        option.None -> Nil
+      }
       Nil
     }
     event_handler.InteractionCreate(interaction) -> {
