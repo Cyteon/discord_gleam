@@ -11,6 +11,7 @@ gleam add discord_gleam
 import discord_gleam
 import discord_gleam/event_handler
 import discord_gleam/types/message
+import discord_gleam/discord/intents
 import gleam/list
 import gleam/string
 import logging
@@ -19,7 +20,7 @@ pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot("YOUR TOKEN")
+  let bot = discord_gleam.bot("YOUR TOKEN", intents.Intents(message_content: True, guild_messages: True))
 
   discord_gleam.run(bot, [event_handler])
 }

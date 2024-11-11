@@ -2,7 +2,6 @@ import bravo/uset
 import discord_gleam
 import discord_gleam/discord/intents
 import discord_gleam/event_handler
-import discord_gleam/types/bot
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
 import gleam/list
