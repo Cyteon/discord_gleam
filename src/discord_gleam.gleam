@@ -1,3 +1,4 @@
+import discord_gleam/discord/intents
 import gleam/option
 import discord_gleam/event_handler
 import discord_gleam/http/endpoints
@@ -11,9 +12,10 @@ import gleam/list
 import bravo/uset
 import bravo
 
-pub fn bot(token: String) -> bot.Bot {
+pub fn bot(token: String, intents: intents.Intents) -> bot.Bot {
   bot.Bot(
     token: token,
+    intents: intents,
     cache: bot.Cache(
       messages: case uset.new("MessagesCache", 1, bravo.Public) {
           Ok(cache) -> option.Some(cache)

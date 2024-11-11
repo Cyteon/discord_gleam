@@ -56,7 +56,7 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
             logging.log(logging.Debug, msg)
             case state.has_received_hello {
               False -> {
-                let identify = identify.create_packet(bot.token)
+                let identify = identify.create_packet(bot.token, bot.intents)
                 let _ = stratus.send_text_message(conn, identify)
 
                 let new_state = State(has_received_hello: True, s: 0)

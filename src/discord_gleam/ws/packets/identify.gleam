@@ -1,3 +1,4 @@
+import discord_gleam/discord/intents
 import gleam/json
 
 pub type IdentifyProperties {
@@ -12,14 +13,14 @@ pub type IdentifyPacket {
   IdentifyPacket(op: Int, d: IndentifyData)
 }
 
-pub fn create_packet(token: String) -> String {
+pub fn create_packet(token: String, intents: intents.Intents) -> String {
   let raw_packet =
     IdentifyPacket(
       op: 2,
       d: IndentifyData(
-        token,
-        33_281,
-        IdentifyProperties("unix", "discord_gleam", "discord_gleam"),
+        token: token,
+        intents: intents.intents_to_bitfield(intents),
+        properties: IdentifyProperties("unix", "discord_gleam", "discord_gleam"),
       ),
     )
 

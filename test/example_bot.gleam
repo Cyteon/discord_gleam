@@ -1,3 +1,4 @@
+import discord_gleam/discord/intents
 import bravo/uset
 import discord_gleam/types/bot
 import discord_gleam
@@ -13,7 +14,10 @@ pub fn main(token: String, client_id: String, guild_id: String) {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot(token)
+  let bot = discord_gleam.bot(token, intents.Intents(
+    message_content: True,
+    guild_messages: True,
+  ))
 
   let test_cmd =
     slash_command.SlashCommand(
