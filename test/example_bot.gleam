@@ -2,6 +2,7 @@ import bravo/uset
 import discord_gleam
 import discord_gleam/discord/intents
 import discord_gleam/event_handler
+import discord_gleam/types/bot
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
 import gleam/list
@@ -59,7 +60,7 @@ pub fn main(token: String, client_id: String, guild_id: String) {
   discord_gleam.run(bot, [event_handler])
 }
 
-fn event_handler(bot, packet: event_handler.Packet) {
+fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
   case packet {
     event_handler.ReadyPacket(ready) -> {
       logging.log(logging.Info, "Logged in as " <> ready.d.user.username)
@@ -68,32 +69,46 @@ fn event_handler(bot, packet: event_handler.Packet) {
     }
     event_handler.MessagePacket(message) -> {
       logging.log(logging.Info, "Message: " <> message.d.content)
-      case message.d.content {
-        "!ping" -> {
-          discord_gleam.send_message(bot, message.d.channel_id, "Pong!", [])
-        }
-        "!embed" -> {
-          let embed1 =
-            message.Embed(
-              title: "Embed Title",
-              description: "Embed Description",
-              color: 0x00FF00,
-            )
+      case message.d.author.id != bot.client_id {
+        True -> {
+          case message.d.content {
+            "!ping" -> {
+              discord_gleam.send_message(bot, message.d.channel_id, "Pong!", [])
+            }
+            "!embed" -> {
+              let embed1 =
+                message.Embed(
+                  title: "Embed Title",
+                  description: "Embed Description",
+                  color: 0x00FF00,
+                )
 
-          discord_gleam.send_message(bot, message.d.channel_id, "Embed!", [
-            embed1,
-          ])
+              discord_gleam.send_message(bot, message.d.channel_id, "Embed!", [
+                embed1,
+              ])
+            }
+            "!reply" -> {
+              discord_gleam.reply(
+                bot,
+                message.d.channel_id,
+                message.d.id,
+                "Reply!",
+                [],
+              )
+            }
+            "hello" -> {
+              discord_gleam.reply(
+                bot,
+                message.d.channel_id,
+                message.d.id,
+                "hello",
+                [],
+              )
+            }
+            _ -> Nil
+          }
         }
-        "!reply" -> {
-          discord_gleam.reply(
-            bot,
-            message.d.channel_id,
-            message.d.id,
-            "Reply!",
-            [],
-          )
-        }
-        _ -> Nil
+        False -> Nil
       }
 
       case string.starts_with(message.d.content, "!kick ") {
