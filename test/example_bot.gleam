@@ -16,6 +16,7 @@ pub fn main(token: String, client_id: String, guild_id: String) {
   let bot =
     discord_gleam.bot(
       token,
+      client_id,
       intents.Intents(message_content: True, guild_messages: True),
     )
 
@@ -49,11 +50,11 @@ pub fn main(token: String, client_id: String, guild_id: String) {
       ],
     )
 
-  discord_gleam.wipe_global_commands(bot, client_id)
-  discord_gleam.register_global_commands(bot, client_id, [test_cmd])
+  discord_gleam.wipe_global_commands(bot)
+  discord_gleam.register_global_commands(bot, [test_cmd])
 
-  discord_gleam.wipe_guild_commands(bot, client_id, guild_id)
-  discord_gleam.register_guild_commands(bot, client_id, guild_id, [test_cmd2])
+  discord_gleam.wipe_guild_commands(bot, guild_id)
+  discord_gleam.register_guild_commands(bot, guild_id, [test_cmd2])
 
   discord_gleam.run(bot, [event_handler])
 }
