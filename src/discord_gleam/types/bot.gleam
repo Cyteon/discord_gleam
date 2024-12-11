@@ -5,7 +5,12 @@ import discord_gleam/ws/packets/message.{type MessagePacketData}
 import gleam/option
 
 pub type Bot {
-  Bot(token: String, intents: intents.Intents, cache: Cache)
+  Bot(
+    token: String,
+    client_id: Snowflake,
+    intents: intents.Intents,
+    cache: Cache,
+  )
 }
 
 pub type Cache {

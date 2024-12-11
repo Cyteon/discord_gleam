@@ -12,9 +12,14 @@ import discord_gleam/ws/packets/interaction_create
 import gleam/list
 import gleam/option
 
-pub fn bot(token: String, intents: intents.Intents) -> bot.Bot {
+pub fn bot(
+  token: String,
+  client_id: String,
+  intents: intents.Intents,
+) -> bot.Bot {
   bot.Bot(
     token: token,
+    client_id: client_id,
     intents: intents,
     cache: bot.Cache(messages: case uset.new("MessagesCache", 1, bravo.Public) {
       Ok(cache) -> option.Some(cache)
@@ -81,39 +86,35 @@ pub fn delete_message(
   endpoints.delete_message(bot.token, channel_id, message_id, reason)
 }
 
-pub fn wipe_global_commands(
-  bot: bot.Bot,
-  client_id: String,
-) -> #(String, String) {
-  endpoints.wipe_global_commands(bot.token, client_id)
+pub fn wipe_global_commands(bot: bot.Bot) -> #(String, String) {
+  endpoints.wipe_global_commands(bot.token, bot.client_id)
 }
 
-pub fn wipe_guild_commands(
-  bot: bot.Bot,
-  client_id: String,
-  guild_id: String,
-) -> #(String, String) {
-  endpoints.wipe_guild_commands(bot.token, client_id, guild_id)
+pub fn wipe_guild_commands(bot: bot.Bot, guild_id: String) -> #(String, String) {
+  endpoints.wipe_guild_commands(bot.token, bot.client_id, guild_id)
 }
 
 pub fn register_global_commands(
   bot: bot.Bot,
-  client_id: String,
   commands: List(slash_command.SlashCommand),
 ) {
   list.each(commands, fn(command) {
-    endpoints.register_global_command(bot.token, client_id, command)
+    endpoints.register_global_command(bot.token, bot.client_id, command)
   })
 }
 
 pub fn register_guild_commands(
   bot: bot.Bot,
-  client_id: String,
   guild_id: String,
   commands: List(slash_command.SlashCommand),
 ) {
   list.each(commands, fn(command) {
-    endpoints.register_guild_command(bot.token, client_id, guild_id, command)
+    endpoints.register_guild_command(
+      bot.token,
+      bot.client_id,
+      guild_id,
+      command,
+    )
   })
 }
 
