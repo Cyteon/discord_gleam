@@ -5,7 +5,6 @@ import discord_gleam/event_handler
 import discord_gleam/types/bot
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
-import gleam/list
 import gleam/option
 import gleam/string
 import logging
@@ -111,23 +110,12 @@ fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
         False -> Nil
       }
 
-      case string.starts_with(message.d.content, "!kick ") {
-        True -> {
-          let args = string.split(message.d.content, " ")
-
-          let args = case list.pop(args, fn(x) { x == "!kick" }) {
-            Ok(args) -> args.1
-            Error(_) -> [""]
-          }
-
-          let user = case list.first(args) {
-            Ok(x) -> x
-            Error(_) -> ""
-          }
-
-          let args = case list.pop(args, fn(x) { x == user }) {
-            Ok(args) -> args.1
-            Error(_) -> [""]
+      case message.d.content {
+        "!kick " <> args -> {
+          let args = string.split(args, " ")
+          let #(user, args) = case args {
+            [user, ..args] -> #(user, args)
+            _ -> #("", [])
           }
 
           let user = string.replace(user, "<@", "")
@@ -157,25 +145,14 @@ fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
             }
           }
         }
-        False -> Nil
+        _ -> Nil
       }
-      case string.starts_with(message.d.content, "!ban ") {
-        True -> {
-          let args = string.split(message.d.content, " ")
-
-          let args = case list.pop(args, fn(x) { x == "!ban" }) {
-            Ok(args) -> args.1
-            Error(_) -> [""]
-          }
-
-          let user = case list.first(args) {
-            Ok(x) -> x
-            Error(_) -> ""
-          }
-
-          let args = case list.pop(args, fn(x) { x == user }) {
-            Ok(args) -> args.1
-            Error(_) -> [""]
+      case message.d.content {
+        "!ban " <> args -> {
+          let args = string.split(args, " ")
+          let #(user, args) = case args {
+            [user, ..args] -> #(user, args)
+            _ -> #("", [])
           }
 
           let user = string.replace(user, "<@", "")
@@ -205,7 +182,7 @@ fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
             }
           }
         }
-        False -> Nil
+        _ -> Nil
       }
     }
     event_handler.MessageDeletePacket(deleted) -> {

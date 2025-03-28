@@ -1,5 +1,5 @@
+import envoy
 import example_bot
-import gleam/erlang/os
 import gleam/io
 import gleam/result
 
@@ -19,7 +19,7 @@ pub fn main() {
 }
 
 fn get_env(var: String) -> Result(String, String) {
-  case os.get_env(var) {
+  case envoy.get(var) {
     Ok(value) -> Ok(value)
     Error(_) -> Error("Environment variable " <> var <> " not found")
   }
