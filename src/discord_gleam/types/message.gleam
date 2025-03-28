@@ -1,4 +1,3 @@
-import gleam/io
 import gleam/json
 import gleam/list
 

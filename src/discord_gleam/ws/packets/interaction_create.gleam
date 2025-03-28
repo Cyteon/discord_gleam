@@ -1,6 +1,4 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
-import discord_gleam/types/slash_command
-import discord_gleam/types/user
 import gleam/dynamic
 import gleam/io
 import gleam/json

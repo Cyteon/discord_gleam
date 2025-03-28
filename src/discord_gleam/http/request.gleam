@@ -1,6 +1,5 @@
 import gleam/http
 import gleam/http/request
-import gleam/list
 
 pub fn new(method: http.Method, path: String) -> request.Request(String) {
   request.new()

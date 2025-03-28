@@ -1,6 +1,5 @@
 import gleam/dynamic
 import gleam/json
-import gleam/result
 
 pub type HelloPacketData {
   HelloPacketData(heartbeat_interval: Int)

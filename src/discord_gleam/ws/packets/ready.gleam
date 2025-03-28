@@ -2,7 +2,6 @@ import discord_gleam/discord/snowflake.{type Snowflake}
 import gleam/dynamic
 import gleam/json
 import gleam/result
-import logging
 
 pub type ReadyUser {
   ReadyUser(username: String, id: Snowflake, discriminator: String, bot: Bool)
