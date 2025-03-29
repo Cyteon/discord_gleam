@@ -1,6 +1,6 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
 import discord_gleam/internal/error
-import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/json
 import gleam/option.{type Option}
 import gleam/result
@@ -39,16 +39,16 @@ pub fn from_json_string(encoded: String) -> Result(User, error.DiscordError) {
       Error(error.Unauthorized("Error, 401, Unauthorized :c, is token correct?"))
     }
     False -> {
-      let decoder =
-        dynamic.decode4(
-          PartialUser,
-          dynamic.field("id", of: snowflake.from_dynamic),
-          dynamic.field("username", of: dynamic.string),
-          dynamic.field("discriminator", of: dynamic.string),
-          dynamic.field("avatar", of: dynamic.optional(dynamic.string)),
-        )
+      let decoder = {
+        use id <- decode.field("id", decode.string)
+        //snowflake.from_dynamic)
+        use username <- decode.field("username", decode.string)
+        use discriminator <- decode.field("discriminator", decode.string)
+        use avatar <- decode.field("avatar", decode.optional(decode.string))
+        decode.success(PartialUser(id:, username:, discriminator:, avatar:))
+      }
 
-      json.decode(from: encoded, using: decoder)
+      json.parse(from: encoded, using: decoder)
       |> result.map_error(error.InvalidJson)
     }
   }

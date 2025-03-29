@@ -1,4 +1,5 @@
 import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/int
 
 /// See https://discord.com/developers/docs/reference#snowflakes
@@ -6,24 +7,24 @@ pub type Snowflake =
   String
 
 pub fn from_dynamic(
-  dyn: dynamic.Dynamic,
-) -> Result(Snowflake, List(dynamic.DecodeError)) {
+  dyn: decode.Dynamic,
+) -> Result(Snowflake, List(decode.DecodeError)) {
   case dynamic.classify(dyn) {
     "String" -> {
-      dynamic.string(dyn)
+      decode.run(dyn, decode.string)
     }
     "Int" -> {
-      case dynamic.int(dyn) {
+      case decode.run(dyn, decode.int) {
         Ok(num) -> Ok(int.to_string(num))
         Error(errors) -> Error(errors)
       }
     }
     // Should be a String or Int, this should not happen
-    _ ->
+    type_name ->
       Error([
-        dynamic.DecodeError(
+        decode.DecodeError(
           expected: "String or Int",
-          found: dynamic.classify(dyn),
+          found: type_name,
           path: [],
         ),
       ])

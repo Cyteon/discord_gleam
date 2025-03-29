@@ -1,5 +1,5 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
-import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/json
 import gleam/result
 
@@ -16,23 +16,22 @@ pub type MessageDeletePacket {
 }
 
 pub fn string_to_data(encoded: String) -> Result(MessageDeletePacket, String) {
-  let decoder =
-    dynamic.decode4(
-      MessageDeletePacket,
-      dynamic.field("t", of: dynamic.string),
-      dynamic.field("s", of: dynamic.int),
-      dynamic.field("op", of: dynamic.int),
-      dynamic.field(
-        "d",
-        of: dynamic.decode3(
-          MessageDeletePacketData,
-          dynamic.field("id", of: snowflake.from_dynamic),
-          dynamic.field("guild_id", of: snowflake.from_dynamic),
-          dynamic.field("channel_id", of: snowflake.from_dynamic),
-        ),
-      ),
-    )
+  let decoder = {
+    use t <- decode.field("t", decode.string)
+    use s <- decode.field("s", decode.int)
+    use op <- decode.field("op", decode.int)
+    use d <- decode.field("d", {
+      use id <- decode.field("id", decode.string)
+      //snowflake.from_dynamic)
+      use guild_id <- decode.field("guild_id", decode.string)
+      //snowflake.from_dynamic)
+      use channel_id <- decode.field("channel_id", decode.string)
+      //snowflake.from_dynamic)
+      decode.success(MessageDeletePacketData(id:, guild_id:, channel_id:))
+    })
+    decode.success(MessageDeletePacket(t:, s:, op:, d:))
+  }
 
-  json.decode(from: encoded, using: decoder)
+  json.parse(from: encoded, using: decoder)
   |> result.map_error(fn(_) { "Failed to decode MessagePacket" })
 }

@@ -1,5 +1,5 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
-import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/json
 import gleam/result
 
@@ -16,31 +16,25 @@ pub type ReadyPacket {
 }
 
 pub fn string_to_data(encoded: String) -> Result(ReadyPacket, String) {
-  let decoder =
-    dynamic.decode4(
-      ReadyPacket,
-      dynamic.field("t", of: dynamic.string),
-      dynamic.field("s", of: dynamic.int),
-      dynamic.field("op", of: dynamic.int),
-      dynamic.field(
-        "d",
-        of: dynamic.decode2(
-          ReadyData,
-          dynamic.field("v", of: dynamic.int),
-          dynamic.field(
-            "user",
-            of: dynamic.decode4(
-              ReadyUser,
-              dynamic.field("username", of: dynamic.string),
-              dynamic.field("id", of: snowflake.from_dynamic),
-              dynamic.field("discriminator", of: dynamic.string),
-              dynamic.field("bot", of: dynamic.bool),
-            ),
-          ),
-        ),
-      ),
-    )
+  let decoder = {
+    use t <- decode.field("t", decode.string)
+    use s <- decode.field("s", decode.int)
+    use op <- decode.field("op", decode.int)
+    use d <- decode.field("d", {
+      use v <- decode.field("v", decode.int)
+      use user <- decode.field("user", {
+        use username <- decode.field("username", decode.string)
+        use id <- decode.field("id", decode.string)
+        //snowflake.from_dynamic),
+        use discriminator <- decode.field("discriminator", decode.string)
+        use bot <- decode.field("bot", decode.bool)
+        decode.success(ReadyUser(username:, id:, discriminator:, bot:))
+      })
+      decode.success(ReadyData(v:, user:))
+    })
+    decode.success(ReadyPacket(t:, s:, op:, d:))
+  }
 
-  json.decode(from: encoded, using: decoder)
+  json.parse(from: encoded, using: decoder)
   |> result.map_error(fn(_) { "Failed to decode MessagePacket" })
 }
