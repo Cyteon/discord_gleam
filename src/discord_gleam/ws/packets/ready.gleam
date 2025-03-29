@@ -24,8 +24,7 @@ pub fn string_to_data(encoded: String) -> Result(ReadyPacket, String) {
       use v <- decode.field("v", decode.int)
       use user <- decode.field("user", {
         use username <- decode.field("username", decode.string)
-        use id <- decode.field("id", decode.string)
-        //snowflake.from_dynamic),
+        use id <- decode.field("id", snowflake.decoder())
         use discriminator <- decode.field("discriminator", decode.string)
         use bot <- decode.field("bot", decode.bool)
         decode.success(ReadyUser(username:, id:, discriminator:, bot:))

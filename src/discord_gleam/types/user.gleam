@@ -40,8 +40,7 @@ pub fn from_json_string(encoded: String) -> Result(User, error.DiscordError) {
     }
     False -> {
       let decoder = {
-        use id <- decode.field("id", decode.string)
-        //snowflake.from_dynamic)
+        use id <- decode.field("id", snowflake.decoder())
         use username <- decode.field("username", decode.string)
         use discriminator <- decode.field("discriminator", decode.string)
         use avatar <- decode.field("avatar", decode.optional(decode.string))

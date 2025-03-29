@@ -47,25 +47,20 @@ pub fn string_to_data(encoded: String) -> Result(InteractionCreate, String) {
       use member <- decode.field("member", {
         use user <- decode.field("user", {
           use username <- decode.field("username", decode.string)
-          use id <- decode.field("id", decode.string)
-          //snowflake.from_dynamic)
+          use id <- decode.field("id", snowflake.decoder())
           decode.success(InteractionUser(username:, id:))
         })
         decode.success(InteractionCreateMember(user:))
       })
-      use id <- decode.field("id", decode.string)
-      //snowflake.from_dynamic)
-      use guild_id <- decode.field("guild_id", decode.string)
-      //snowflake.from_dynamic)
+      use id <- decode.field("id", snowflake.decoder())
+      use guild_id <- decode.field("guild_id", snowflake.decoder())
       use data <- decode.field("data", {
         use type_ <- decode.field("type", decode.int)
         use name <- decode.field("name", decode.string)
-        use id <- decode.field("id", decode.string)
-        //snowflake.from_dynamic)
+        use id <- decode.field("id", snowflake.decoder())
         decode.success(InteractionCommand(type_:, name:, id:))
       })
-      use channel_id <- decode.field("channel_id", decode.string)
-      //snowflake.from_dynamic)
+      use channel_id <- decode.field("channel_id", snowflake.decoder())
       decode.success(InteractionCreateData(
         token:,
         member:,
