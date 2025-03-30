@@ -12,6 +12,8 @@ repository = { type = "github", user = "cyteon", repo = "discord_gleam" }
 # For a full reference of all the available options, you can have a look at
 # https://gleam.run/writing-gleam/gleam-toml/.
 
+gleam = ">= 1.9.0"
+
 [dependencies]
 gleam_stdlib = ">= 0.58.0 and < 1.0.0"
 gleam_erlang = ">= 0.25.0 and < 1.0.0"
