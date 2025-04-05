@@ -1,4 +1,4 @@
-import bravo/uset.{type USet}
+import bravo/uset
 import discord_gleam/types/bot
 import discord_gleam/ws/packets/generic
 import discord_gleam/ws/packets/interaction_create

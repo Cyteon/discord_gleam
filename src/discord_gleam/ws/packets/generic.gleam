@@ -1,4 +1,4 @@
-import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/json
 
 pub type GenericPacket {
@@ -6,15 +6,14 @@ pub type GenericPacket {
 }
 
 pub fn string_to_data(encoded: String) -> GenericPacket {
-  let decoder =
-    dynamic.decode3(
-      GenericPacket,
-      dynamic.field("t", of: dynamic.string),
-      dynamic.field("s", of: dynamic.int),
-      dynamic.field("op", of: dynamic.int),
-    )
+  let decoder = {
+    use t <- decode.field("t", decode.string)
+    use s <- decode.field("s", decode.int)
+    use op <- decode.field("op", decode.int)
+    decode.success(GenericPacket(t:, s:, op:))
+  }
 
-  let data = json.decode(from: encoded, using: decoder)
+  let data = json.parse(from: encoded, using: decoder)
 
   case data {
     Ok(decoded) -> decoded

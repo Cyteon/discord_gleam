@@ -1,5 +1,3 @@
-import gleam/io
-
 pub type Intents {
   Intents(guild_messages: Bool, message_content: Bool)
 }
