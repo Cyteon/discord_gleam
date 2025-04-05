@@ -10,7 +10,7 @@ pub type MessageAuthor {
 pub type MessagePacketData {
   MessagePacketData(
     content: String,
-    id: String,
+    id: Snowflake,
     guild_id: Snowflake,
     channel_id: Snowflake,
     author: MessageAuthor,
