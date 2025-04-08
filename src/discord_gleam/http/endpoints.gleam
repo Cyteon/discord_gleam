@@ -9,8 +9,8 @@ import gleam/dynamic
 import gleam/hackney
 import gleam/http
 import gleam/http/response
-import gleam/io
 import gleam/int
+import gleam/io
 import logging
 
 pub fn me(token: String) -> Result(user.User, error.DiscordError) {

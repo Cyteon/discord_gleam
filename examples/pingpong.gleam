@@ -1,7 +1,7 @@
 import discord_gleam
+import discord_gleam/discord/intents
 import discord_gleam/event_handler
 import discord_gleam/types/message
-import discord_gleam/discord/intents
 import gleam/list
 import gleam/string
 import logging

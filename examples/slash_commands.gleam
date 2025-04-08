@@ -1,8 +1,8 @@
 import discord_gleam
+import discord_gleam/discord/intents
 import discord_gleam/event_handler
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
-import discord_gleam/discord/intents
 import gleam/list
 import gleam/string
 import logging
@@ -57,7 +57,7 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
       Nil
     }
-    
+
     event_handler.InteractionCreate(interaction) -> {
       logging.log(logging.Info, "Interaction: " <> interaction.d.data.name)
 
