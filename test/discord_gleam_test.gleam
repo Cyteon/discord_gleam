@@ -1,26 +1,23 @@
-import envoy
 import example_bot
 import gleam/io
 import gleam/result
+import glenvy/dotenv
+import glenvy/env
 
 pub fn main() {
-  case
-    {
-      use token <- result.try(get_env("TEST_BOT_TOKEN"))
-      use client_id <- result.try(get_env("TEST_BOT_CLIENT_ID"))
-      use guild_id <- result.try(get_env("TEST_BOT_GUILD_ID"))
+  let _ = dotenv.load()
+
+  case {
+      use token <- result.try(env.get_string("TEST_BOT_TOKEN"))
+      use client_id <- result.try(env.get_string("TEST_BOT_CLIENT_ID"))
+      use guild_id <- result.try(env.get_string("TEST_BOT_GUILD_ID"))
 
       Ok(example_bot.main(token, client_id, guild_id))
-    }
-  {
+  } {
     Ok(_) -> Nil
-    Error(msg) -> io.println(msg)
-  }
-}
-
-fn get_env(var: String) -> Result(String, String) {
-  case envoy.get(var) {
-    Ok(value) -> Ok(value)
-    Error(_) -> Error("Environment variable " <> var <> " not found")
+    Error(msg) -> {
+      io.debug(msg)
+      Nil
+    }
   }
 }

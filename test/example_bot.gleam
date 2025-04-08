@@ -196,7 +196,7 @@ fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
             Ok(msg) -> {
               logging.log(
                 logging.Info,
-                "Deleted message: " <> { msg.1 }.content,
+                "Message content: " <> { msg.1 }.content,
               )
             }
             Error(_) -> {
