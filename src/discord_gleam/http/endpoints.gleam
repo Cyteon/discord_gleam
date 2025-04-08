@@ -10,6 +10,7 @@ import gleam/hackney
 import gleam/http
 import gleam/http/response
 import gleam/io
+import gleam/int
 import logging
 
 pub fn me(token: String) -> Result(user.User, error.DiscordError) {
@@ -43,8 +44,6 @@ pub fn send_message(
 ) -> Nil {
   let data = message.to_string(message)
 
-  io.debug(data)
-
   logging.log(logging.Debug, "Sending message: " <> data)
 
   let request =
@@ -63,7 +62,9 @@ pub fn send_message(
         }
         _ -> {
           logging.log(logging.Error, "Failed to send message")
+          io.println("- Response: ")
           io.debug(resp.body)
+          io.println("- Status: " <> int.to_string(resp.status))
 
           Nil
         }
@@ -73,6 +74,7 @@ pub fn send_message(
     }
     Error(err) -> {
       logging.log(logging.Error, "Failed to send message: ")
+      io.println("- Error: ")
       io.debug(err)
 
       Nil
