@@ -2,7 +2,7 @@ import discord_gleam
 import discord_gleam/event_handler
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
-import discord_gleam/ws/packets/message_delete
+import discord_gleam/discord/intents
 import gleam/list
 import gleam/string
 import logging
@@ -11,7 +11,12 @@ pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot("YOUR TOKEN")
+  let bot =
+    discord_gleam.bot(
+      "YOUR TOKEN",
+      "YOUR CLIENT ID",
+      intents.Intents(message_content: True, guild_messages: True),
+    )
 
   let test_cmd =
     slash_command.SlashCommand(
@@ -52,6 +57,7 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
       Nil
     }
+    
     event_handler.InteractionCreate(interaction) -> {
       logging.log(logging.Info, "Interaction: " <> interaction.d.data.name)
 
