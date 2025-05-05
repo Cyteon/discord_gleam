@@ -5,7 +5,7 @@ import discord_gleam/event_handler
 import discord_gleam/types/bot
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
-import gleam/option
+import gleam/option.{Some}
 import gleam/string
 import logging
 
@@ -17,7 +17,11 @@ pub fn main(token: String, client_id: String, guild_id: String) {
     discord_gleam.bot(
       token,
       client_id,
-      intents.Intents(message_content: True, guild_messages: True),
+      intents.Intents(
+        message_content: True,
+        guild_messages: True,
+        direct_messages: True,
+      ),
     )
 
   let test_cmd =
@@ -110,8 +114,8 @@ fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
         False -> Nil
       }
 
-      case message.d.content {
-        "!kick " <> args -> {
+      case message.d.content, message.d.guild_id {
+        "!kick " <> args, Some(guild_id) -> {
           let args = string.split(args, " ")
           let #(user, args) = case args {
             [user, ..args] -> #(user, args)
@@ -123,8 +127,7 @@ fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
 
           let reason = string.join(args, " ")
 
-          let resp =
-            discord_gleam.kick_member(bot, message.d.guild_id, user, reason)
+          let resp = discord_gleam.kick_member(bot, guild_id, user, reason)
 
           case resp.0 {
             "OK" -> {
@@ -145,10 +148,10 @@ fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
             }
           }
         }
-        _ -> Nil
+        _, _ -> Nil
       }
-      case message.d.content {
-        "!ban " <> args -> {
+      case message.d.content, message.d.guild_id {
+        "!ban " <> args, Some(guild_id) -> {
           let args = string.split(args, " ")
           let #(user, args) = case args {
             [user, ..args] -> #(user, args)
@@ -160,8 +163,7 @@ fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
 
           let reason = string.join(args, " ")
 
-          let resp =
-            discord_gleam.ban_member(bot, message.d.guild_id, user, reason)
+          let resp = discord_gleam.ban_member(bot, guild_id, user, reason)
 
           case resp.0 {
             "OK" -> {
@@ -182,7 +184,7 @@ fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
             }
           }
         }
-        _ -> Nil
+        _, _ -> Nil
       }
     }
     event_handler.MessageDeletePacket(deleted) -> {

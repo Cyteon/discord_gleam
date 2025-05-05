@@ -3,6 +3,7 @@ import discord_gleam/discord/intents
 import discord_gleam/event_handler
 import discord_gleam/types/message
 import gleam/list
+import gleam/option.{Some}
 import gleam/string
 import logging
 
@@ -30,8 +31,8 @@ fn event_handler(bot, packet: event_handler.Packet) {
     event_handler.MessagePacket(message) -> {
       logging.log(logging.Info, "Message: " <> message.d.content)
 
-      case string.starts_with(message.d.content, "!kick ") {
-        True -> {
+      case string.starts_with(message.d.content, "!kick "), message.d.guild_id {
+        True, Some(guild_id) -> {
           let args = string.split(message.d.content, " ")
 
           let args = case list.pop(args, fn(x) { x == "!kick" }) {
@@ -54,8 +55,7 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
           let reason = string.join(args, " ")
 
-          let resp =
-            discord_gleam.kick_member(bot, message.d.guild_id, user, reason)
+          let resp = discord_gleam.kick_member(bot, guild_id, user, reason)
 
           case resp.0 {
             "OK" -> {
@@ -76,7 +76,7 @@ fn event_handler(bot, packet: event_handler.Packet) {
             }
           }
         }
-        False -> Nil
+        _, _ -> Nil
       }
     }
     _ -> Nil
