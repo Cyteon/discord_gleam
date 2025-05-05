@@ -12,11 +12,7 @@ pub fn main() {
   logging.set_level(logging.Info)
 
   let bot =
-    discord_gleam.bot(
-      "YOUR TOKEN",
-      "YOUR CLIENT ID",
-      intents.default_intents(),
-    )
+    discord_gleam.bot("YOUR TOKEN", "YOUR CLIENT ID", intents.default_intents())
 
   discord_gleam.run(bot, [event_handler])
 }
