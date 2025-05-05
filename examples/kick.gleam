@@ -15,7 +15,7 @@ pub fn main() {
     discord_gleam.bot(
       "YOUR TOKEN",
       "YOUR CLIENT ID",
-      intents.Intents(message_content: True, guild_messages: True),
+      intents.default_intents(),
     )
 
   discord_gleam.run(bot, [event_handler])
