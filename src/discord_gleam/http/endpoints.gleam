@@ -84,7 +84,6 @@ pub fn send_message(
 
 pub fn reply(token: String, channel_id: String, message: reply.Reply) -> Nil {
   let data = reply.to_string(message)
-  io.debug(data)
 
   logging.log(logging.Debug, "Replying: " <> data)
 
@@ -144,8 +143,6 @@ pub fn kick_member(
         }
         _ -> {
           logging.log(logging.Error, "Failed to kick member")
-          io.debug(resp.body)
-
           #("FAILED", resp.body)
         }
       }
@@ -182,8 +179,6 @@ pub fn ban_member(
         }
         _ -> {
           logging.log(logging.Error, "Failed to ban member")
-          io.debug(resp.body)
-
           #("FAILED", resp.body)
         }
       }
@@ -220,8 +215,6 @@ pub fn delete_message(
         }
         _ -> {
           logging.log(logging.Error, "Failed to delete message")
-          io.debug(resp.body)
-
           #("FAILED", resp.body)
         }
       }
@@ -256,8 +249,6 @@ pub fn wipe_global_commands(
         }
         _ -> {
           logging.log(logging.Error, "Failed to wipe global commands")
-          io.debug(resp.body)
-
           #("FAILED", resp.body)
         }
       }
@@ -293,8 +284,6 @@ pub fn wipe_guild_commands(
         }
         _ -> {
           logging.log(logging.Error, "Failed to wipe guild commands")
-          io.debug(resp.body)
-
           #("FAILED", resp.body)
         }
       }
@@ -337,8 +326,6 @@ pub fn register_global_command(
             logging.Error,
             "Failed to add global command" <> command.name,
           )
-          io.debug(resp.body)
-
           #("FAILED", resp.body)
         }
       }
@@ -382,8 +369,6 @@ pub fn register_guild_command(
             logging.Error,
             "Failed to add guild command" <> command.name,
           )
-          io.debug(resp.body)
-
           #("FAILED", resp.body)
         }
       }
@@ -422,7 +407,6 @@ pub fn interaction_send_text(
         }
         _ -> {
           logging.log(logging.Error, "Failed to send Interaction Response")
-          io.debug(resp.body)
 
           #("FAILED", resp.body)
         }
