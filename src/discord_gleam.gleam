@@ -79,10 +79,11 @@ pub fn run(
 /// 
 ///  let msg = discord_gleam.send_message(
 ///   bot,  
-///  "CHANNEL_ID",
-///  "Hello world!",
-///  [] // embeds
-/// )
+///   "CHANNEL_ID",
+///   "Hello world!",
+///   [] // embeds
+///  )
+/// }
 pub fn send_message(
   bot: bot.Bot,
   channel_id: String,
@@ -94,8 +95,8 @@ pub fn send_message(
   endpoints.send_message(bot.token, channel_id, msg)
 }
 
-/// Send a direct message to a user.
-/// Same use as `send_message`, but use user_id instead of channel_id.
+/// Send a direct message to a user. \
+/// Same use as `send_message`, but use user_id instead of channel_id. \
 /// `discord_gleam.send_direct_message(bot, "USER_ID", "Hello world!", [])`
 pub fn send_direct_message(
   bot: bot.Bot,
