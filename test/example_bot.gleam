@@ -13,7 +13,7 @@ pub fn main(token: String, client_id: String, guild_id: String) {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot(token, client_id, intents.default_intents())
+  let bot = discord_gleam.bot(token, client_id, intents.default())
 
   let test_cmd =
     slash_command.SlashCommand(

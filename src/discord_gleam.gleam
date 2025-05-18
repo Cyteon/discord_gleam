@@ -19,7 +19,7 @@ import gleam/option
 /// import discord_gleam/discord/intents
 /// 
 /// pub fn main() {
-///   let bot = discord_gleam.bot("TOKEN", "CLIENT_ID", intents.default())
+///   let bot = discord_gleam.bot("TOKEN", "CLIENT_ID", intents.default()))
 /// }
 /// ```
 pub fn bot(

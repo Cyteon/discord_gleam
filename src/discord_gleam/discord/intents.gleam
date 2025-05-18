@@ -27,16 +27,16 @@ pub fn intents_to_bitfield(intents: Intents) -> Int {
 }
 
 // this will have intents that are required for most bots such as messages, but not events like join/leave (when added)
-pub fn default_intents() -> Intents {
+pub fn default() -> Intents {
   Intents(guild_messages: True, message_content: True, direct_messages: True)
 }
 
 // will have all intents enabled
-pub fn all_intents() -> Intents {
+pub fn all() -> Intents {
   Intents(guild_messages: True, message_content: True, direct_messages: True)
 }
 
 // i dont know why you would want this, but its here
-pub fn no_intents() -> Intents {
+pub fn none() -> Intents {
   Intents(guild_messages: False, message_content: False, direct_messages: False)
 }
