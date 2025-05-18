@@ -94,6 +94,20 @@ pub fn send_message(
   endpoints.send_message(bot.token, channel_id, msg)
 }
 
+/// Send a direct message to a user.
+/// Same use as `send_message`, but use user_id instead of channel_id.
+/// `discord_gleam.send_direct_message(bot, "USER_ID", "Hello world!", [])`
+pub fn send_direct_message(
+  bot: bot.Bot,
+  user_id: String,
+  message: String,
+  embeds: List(message.Embed),
+) -> Nil {
+  let msg = message.Message(content: message, embeds: embeds)
+
+  endpoints.send_direct_message(bot.token, user_id, msg)
+}
+
 pub fn reply(
   bot: bot.Bot,
   channel_id: String,

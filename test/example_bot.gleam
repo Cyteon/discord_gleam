@@ -69,6 +69,16 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
             "!ping" -> {
               discord_gleam.send_message(bot, message.d.channel_id, "Pong!", [])
             }
+
+            "!dm" -> {
+              discord_gleam.send_direct_message(
+                bot,
+                message.d.author.id,
+                "DM!",
+                [],
+              )
+            }
+
             "!embed" -> {
               let embed1 =
                 message.Embed(

@@ -1,5 +1,6 @@
 import discord_gleam/http/request
 import discord_gleam/internal/error
+import discord_gleam/types/channel
 import discord_gleam/types/message
 import discord_gleam/types/reply
 import discord_gleam/types/slash_command
@@ -61,10 +62,13 @@ pub fn send_message(
           Nil
         }
         _ -> {
-          logging.log(logging.Error, "Failed to send message")
-          io.println("- Response: ")
+          logging.log(
+            logging.Error,
+            "Failed to send message (status: "
+              <> int.to_string(resp.status)
+              <> "):",
+          )
           io.debug(resp.body)
-          io.println("- Status: " <> int.to_string(resp.status))
 
           Nil
         }
@@ -75,6 +79,69 @@ pub fn send_message(
     Error(err) -> {
       logging.log(logging.Error, "Failed to send message: ")
       io.println("- Error: ")
+      io.debug(err)
+
+      Nil
+    }
+  }
+}
+
+pub fn send_direct_message(
+  token: String,
+  user_id: String,
+  message: message.Message,
+) -> Nil {
+  let data = message.to_string(message)
+
+  logging.log(logging.Debug, "Sending DM: " <> data)
+
+  // create a d,
+  let create_request =
+    request.new_auth_post(
+      http.Post,
+      "/users/@me/channels",
+      token,
+      "{ \"recipient_id\": \"" <> user_id <> "\" }",
+    )
+
+  case hackney.send(create_request) {
+    Ok(resp) -> {
+      case resp.status {
+        200 -> {
+          let channel: channel.Channel = channel.string_to_data(resp.body)
+
+          case channel.id {
+            "0" -> {
+              logging.log(
+                logging.Error,
+                "Failed to create DM channel, please make a github issue if this is unexpected",
+              )
+            }
+
+            value -> {
+              send_message(token, value, message)
+            }
+          }
+
+          Nil
+        }
+
+        _ -> {
+          logging.log(
+            logging.Error,
+            "Failed to create DM channel (status: "
+              <> int.to_string(resp.status)
+              <> "):",
+          )
+          io.debug(resp.body)
+
+          Nil
+        }
+      }
+    }
+
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to create DM channel: ")
       io.debug(err)
 
       Nil
@@ -94,6 +161,7 @@ pub fn reply(token: String, channel_id: String, message: reply.Reply) -> Nil {
       token,
       data,
     )
+
   case hackney.send(request) {
     Ok(resp) -> {
       case resp.status {
