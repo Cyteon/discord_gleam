@@ -95,8 +95,8 @@ pub fn send_direct_message(
 
   logging.log(logging.Debug, "Sending DM: " <> data)
 
-  // create a d,
-  let create_request =
+  // create a DM channel
+  let request =
     request.new_auth_post(
       http.Post,
       "/users/@me/channels",
@@ -104,7 +104,7 @@ pub fn send_direct_message(
       "{ \"recipient_id\": \"" <> user_id <> "\" }",
     )
 
-  case hackney.send(create_request) {
+  case hackney.send(request) {
     Ok(resp) -> {
       case resp.status {
         200 -> {
