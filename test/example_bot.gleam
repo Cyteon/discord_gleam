@@ -51,10 +51,10 @@ pub fn main(token: String, client_id: String, guild_id: String) {
   discord_gleam.wipe_guild_commands(bot, guild_id)
   discord_gleam.register_guild_commands(bot, guild_id, [test_cmd2])
 
-  discord_gleam.run(bot, [event_handler])
+  discord_gleam.run(bot, [handler])
 }
 
-fn event_handler(bot: bot.Bot, packet: event_handler.Packet) {
+fn handler(bot: bot.Bot, packet: event_handler.Packet) {
   case packet {
     event_handler.ReadyPacket(ready) -> {
       logging.log(logging.Info, "Logged in as " <> ready.d.user.username)

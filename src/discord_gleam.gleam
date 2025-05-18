@@ -12,6 +12,16 @@ import discord_gleam/ws/packets/interaction_create
 import gleam/list
 import gleam/option
 
+/// Create a new bot instance.
+/// 
+/// Example:
+/// ```gleam
+/// import discord_gleam/discord/intents
+/// 
+/// pub fn main() {
+///   let bot = discord_gleam.bot("TOKEN", "CLIENT_ID", intents.default())
+/// }
+/// ```
 pub fn bot(
   token: String,
   client_id: String,
@@ -28,6 +38,29 @@ pub fn bot(
   )
 }
 
+/// Start the event loop, with a set of event handlers.
+///
+/// Example:
+/// ```gleam
+/// import discord_gleam/discord/intents
+/// import discord_gleam/event_handler
+/// 
+/// pub fn main() {
+///  let bot = discord_gleam.bot("TOKEN", "CLIENT_ID", intents.default())
+/// 
+///  let event_handlers = [handler]
+/// }
+/// 
+/// fn handler(bot: bot.Bot, packet: event_handler.Packet) {
+///  case packet {
+///   event_handler.ReadyPacket(ready) -> {
+///     logging.log(logging.Info, "Logged in as " <> ready.d.user.username)
+///   }
+/// 
+///   _ -> Nil
+///  }
+/// }
+/// 
 pub fn run(
   bot: bot.Bot,
   event_handlers: List(event_handler.EventHandler),
@@ -35,6 +68,21 @@ pub fn run(
   event_loop.main(bot, event_handlers)
 }
 
+/// Send a message to a channel.
+/// 
+/// Example:
+/// ```gleam
+/// import discord_gleam
+/// 
+/// pub fn main() {
+///  ...
+/// 
+///  let msg = discord_gleam.send_message(
+///   bot,  
+///  "CHANNEL_ID",
+///  "Hello world!",
+///  [] // embeds
+/// )
 pub fn send_message(
   bot: bot.Bot,
   channel_id: String,
