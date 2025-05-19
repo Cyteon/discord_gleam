@@ -1,3 +1,5 @@
+import bravo
+import bravo/uset
 import discord_gleam/event_handler
 import discord_gleam/types/bot
 import discord_gleam/ws/packets/generic
@@ -26,6 +28,10 @@ pub type State {
 /// Start the event loop, with a set of event handlers.
 pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
   logging.log(logging.Debug, "Requesting gateway")
+
+  let assert Ok(state_uset) = uset.new("State", 1, bravo.Public)
+
+  uset.insert(state_uset, [#("sequence", 0)])
 
   let req =
     request.new()
@@ -67,11 +73,14 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
                 process.start(
                   fn() {
                     repeatedly.call(heartbeat, Nil, fn(_state, _count_) {
+                      let sequence = case uset.lookup(state_uset, "sequence") {
+                        Ok(sequence) -> sequence.1
+                        Error(_) -> 0
+                      }
+
                       let packet =
                         "{\"op\": 1, \"d\": null, \"s\": "
-                        <> int.to_string(state.s)
-                        // TODO: This is wrong, its always 0???
-                        // Might be an issue with state cause this is in a process
+                        <> int.to_string(sequence)
                         <> "}"
 
                       logging.log(
@@ -89,6 +98,16 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
               }
               True -> {
                 let generic_packet = generic.string_to_data(msg)
+
+                case generic_packet.s {
+                  0 -> Nil
+
+                  _ -> {
+                    uset.insert(state_uset, [#("sequence", generic_packet.s)])
+
+                    Nil
+                  }
+                }
 
                 let new_state =
                   State(has_received_hello: True, s: generic_packet.s)
