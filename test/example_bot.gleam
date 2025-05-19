@@ -6,7 +6,7 @@ import discord_gleam/types/bot
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
 import gleam/io
-import gleam/option.{Some, None}
+import gleam/option.{None, Some}
 import gleam/string
 import logging
 
@@ -88,9 +88,9 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
                       <> channel.id
                       <> "\nLast message ID: "
                       <> case channel.last_message_id {
-                        Some(id) -> id
-                        None -> "None"
-                      },
+                      Some(id) -> id
+                      None -> "None"
+                    },
                     [],
                   )
                 }

@@ -28,14 +28,17 @@ pub fn main() {
 fn event_handler(bot, packet: event_handler.Packet) {
   case packet {
     event_handler.MessagePacket(message) -> {
-      logging.log(logging.Info, "Message: " <> message.d.content)
+      logging.log(logging.Info, "Got message: " <> message.d.content)
+
       case message.d.content {
         "!ping" -> {
           discord_gleam.send_message(bot, message.d.channel_id, "Pong!", [])
         }
+
         _ -> Nil
       }
     }
+    
     _ -> Nil
   }
 }
