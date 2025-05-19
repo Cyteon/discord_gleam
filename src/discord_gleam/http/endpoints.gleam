@@ -1,3 +1,5 @@
+/// Low-level functions for interacting with the Discord API. \
+/// Preferrably use the higher-level functions in src/discord_gleam.gleam.
 import discord_gleam/http/request
 import discord_gleam/internal/error
 import discord_gleam/types/channel
@@ -14,6 +16,7 @@ import gleam/int
 import gleam/io
 import logging
 
+/// Get the current user
 pub fn me(token: String) -> Result(user.User, error.DiscordError) {
   let request = request.new_auth(http.Get, "/users/@me", token)
   case hackney.send(request) {
@@ -38,6 +41,7 @@ pub fn me(token: String) -> Result(user.User, error.DiscordError) {
   }
 }
 
+/// Send a message to a channel
 pub fn send_message(
   token: String,
   channel_id: String,
@@ -86,6 +90,7 @@ pub fn send_message(
   }
 }
 
+/// Creates a DM channel, then sends a message with `send_message()`.
 pub fn send_direct_message(
   token: String,
   user_id: String,
@@ -149,6 +154,7 @@ pub fn send_direct_message(
   }
 }
 
+/// Reply to a message
 pub fn reply(token: String, channel_id: String, message: reply.Reply) -> Nil {
   let data = reply.to_string(message)
 
@@ -188,6 +194,7 @@ pub fn reply(token: String, channel_id: String, message: reply.Reply) -> Nil {
   }
 }
 
+/// Kick a member from a server
 pub fn kick_member(
   token: String,
   guild_id: String,
@@ -224,6 +231,7 @@ pub fn kick_member(
   }
 }
 
+/// Ban a member from a server
 pub fn ban_member(
   token: String,
   guild_id: String,
@@ -260,6 +268,7 @@ pub fn ban_member(
   }
 }
 
+/// Delete a message by channel id and message id
 pub fn delete_message(
   token: String,
   channel_id: String,
@@ -296,6 +305,7 @@ pub fn delete_message(
   }
 }
 
+/// Wipes the global commands for the bot
 pub fn wipe_global_commands(
   token: String,
   client_id: String,
@@ -330,6 +340,7 @@ pub fn wipe_global_commands(
   }
 }
 
+/// Wipes the guild commands for the bot
 pub fn wipe_guild_commands(
   token: String,
   client_id: String,
@@ -365,6 +376,7 @@ pub fn wipe_guild_commands(
   }
 }
 
+/// Register a new global slash command
 pub fn register_global_command(
   token: String,
   client_id: String,
@@ -407,6 +419,7 @@ pub fn register_global_command(
   }
 }
 
+/// Register a new guild-specific slash command
 pub fn register_guild_command(
   token: String,
   client_id: String,
@@ -450,6 +463,7 @@ pub fn register_guild_command(
   }
 }
 
+/// Send a basic text reply to an interaction
 pub fn interaction_send_text(
   interaction: interaction_create.InteractionCreate,
   message: String,

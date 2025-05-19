@@ -23,6 +23,7 @@ pub type State {
   State(has_received_hello: Bool, s: Int)
 }
 
+/// Start the event loop, with a set of event handlers.
 pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
   logging.log(logging.Debug, "Requesting gateway")
 
@@ -33,7 +34,7 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
     |> request.set_path("/?v=10&encoding=json")
     |> request.set_header(
       "User-Agent",
-      "DiscordBot (https://github.com/cyteon/discord_gleam, 0.0.6)",
+      "DiscordBot (https://github.com/cyteon/discord_gleam, 0.2.3)",
     )
     |> request.set_header("Host", "gateway.discord.gg")
     |> request.set_header("Connection", "Upgrade")

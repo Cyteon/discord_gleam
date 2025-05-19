@@ -2,6 +2,7 @@ pub type Intents {
   Intents(guild_messages: Bool, message_content: Bool, direct_messages: Bool)
 }
 
+/// Calculate a bitfield from a set of intents.
 pub fn intents_to_bitfield(intents: Intents) -> Int {
   let bitfield = 0
 
@@ -26,17 +27,17 @@ pub fn intents_to_bitfield(intents: Intents) -> Int {
   bitfield
 }
 
-// this will have intents that are required for most bots such as messages, but not events like join/leave (when added)
+/// Enable a set of default intents, which are usally used by most bots.
 pub fn default() -> Intents {
   Intents(guild_messages: True, message_content: True, direct_messages: True)
 }
 
-// will have all intents enabled
+/// Enable all the intents, use this if you want to receive all supported events.
 pub fn all() -> Intents {
   Intents(guild_messages: True, message_content: True, direct_messages: True)
 }
 
-// i dont know why you would want this, but its here
+/// Disable all the intents, use this if you want to receive no events.
 pub fn none() -> Intents {
   Intents(guild_messages: False, message_content: False, direct_messages: False)
 }

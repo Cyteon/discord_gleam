@@ -39,6 +39,7 @@ fn internal_handler(bot: bot.Bot, packet: Packet) -> Nil {
   }
 }
 
+/// Handle an event from the Discord API, using a set of event handlers.
 pub fn handle_event(
   bot: bot.Bot,
   msg: String,

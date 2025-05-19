@@ -1,3 +1,7 @@
+//// The primary module of discord_gleam. \
+//// This module contains high-level functions to interact with the Discord API. \
+//// But you can always implement stuff yourself using the low-level functions from the rest of the library. \
+
 import bravo
 import bravo/uset
 import discord_gleam/discord/intents
@@ -18,7 +22,7 @@ import gleam/option
 /// ```gleam
 /// import discord_gleam/discord/intents
 /// 
-/// pub fn main() {
+/// fn main() {
 ///   let bot = discord_gleam.bot("TOKEN", "CLIENT_ID", intents.default()))
 /// }
 /// ```
@@ -45,10 +49,12 @@ pub fn bot(
 /// import discord_gleam/discord/intents
 /// import discord_gleam/event_handler
 /// 
-/// pub fn main() {
+/// fn main() {
 ///  let bot = discord_gleam.bot("TOKEN", "CLIENT_ID", intents.default())
 /// 
 ///  let event_handlers = [handler]
+/// 
+///  discord_gleam.run(bot, event_handlers)
 /// }
 /// 
 /// fn handler(bot: bot.Bot, packet: event_handler.Packet) {
@@ -74,7 +80,7 @@ pub fn run(
 /// ```gleam
 /// import discord_gleam
 /// 
-/// pub fn main() {
+/// fn main() {
 ///  ...
 /// 
 ///  let msg = discord_gleam.send_message(
@@ -109,6 +115,19 @@ pub fn send_direct_message(
   endpoints.send_direct_message(bot.token, user_id, msg)
 }
 
+/// Reply to a message in a channel.
+/// 
+/// Example:
+/// 
+/// ```gleam
+/// import discord_gleam
+/// 
+/// fn main() {
+///  ...
+/// 
+///  discord_gleam.reply(bot, "CHANNEL_ID", "MESSAGE_ID", "Hello world!", [])
+/// }
+/// ```
 pub fn reply(
   bot: bot.Bot,
   channel_id: String,
@@ -122,6 +141,19 @@ pub fn reply(
   endpoints.reply(bot.token, channel_id, msg)
 }
 
+/// Kicks an member from an server. \
+/// The reason will be what is shown in the audit log.
+/// 
+/// Example:
+/// 
+/// ```gleam
+/// import discord_gleam
+/// 
+/// fn main() {
+///  ...
+/// 
+///  discord_gleam.kick_member(bot, "GUILD_ID", "USER_ID", "REASON")
+/// }
 pub fn kick_member(
   bot: bot.Bot,
   guild_id: String,
@@ -149,14 +181,20 @@ pub fn delete_message(
   endpoints.delete_message(bot.token, channel_id, message_id, reason)
 }
 
+/// Wipes all the global slash commands for the bot. \
+/// Restarting your client might be required to see the changes. \
 pub fn wipe_global_commands(bot: bot.Bot) -> #(String, String) {
   endpoints.wipe_global_commands(bot.token, bot.client_id)
 }
 
+/// Wipes all the guild slash commands for the bot. \
+/// Restarting your client might be required to see the changes. \
 pub fn wipe_guild_commands(bot: bot.Bot, guild_id: String) -> #(String, String) {
   endpoints.wipe_guild_commands(bot.token, bot.client_id, guild_id)
 }
 
+/// Registers a global slash command. \
+/// Restarting your client might be required to see the changes. \
 pub fn register_global_commands(
   bot: bot.Bot,
   commands: List(slash_command.SlashCommand),
@@ -166,6 +204,8 @@ pub fn register_global_commands(
   })
 }
 
+/// Registers a guild-specific slash command. \
+/// Restarting your client might be required to see the changes. \
 pub fn register_guild_commands(
   bot: bot.Bot,
   guild_id: String,
@@ -181,6 +221,7 @@ pub fn register_guild_commands(
   })
 }
 
+/// Make a basic text reply to an interaction.
 pub fn interaction_reply_message(
   interaction: interaction_create.InteractionCreate,
   message: String,

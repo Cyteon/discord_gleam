@@ -11,8 +11,7 @@ pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot =
-    discord_gleam.bot("YOUR TOKEN", "YOUR CLIENT ID", intents.default())
+  let bot = discord_gleam.bot("YOUR TOKEN", "YOUR CLIENT ID", intents.default())
 
   let test_cmd =
     slash_command.SlashCommand(

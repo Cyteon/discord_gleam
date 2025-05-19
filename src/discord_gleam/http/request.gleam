@@ -9,7 +9,7 @@ pub fn new(method: http.Method, path: String) -> request.Request(String) {
   |> request.prepend_header("accept", "application/json")
   |> request.prepend_header(
     "User-Agent",
-    "DiscordBot (https://github.com/cyteon/discord_gleam, 0.0.6)",
+    "DiscordBot (https://github.com/cyteon/discord_gleam, 0.2.3)",
   )
 }
 
