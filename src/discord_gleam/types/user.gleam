@@ -48,7 +48,7 @@ pub fn from_json_string(encoded: String) -> Result(User, error.DiscordError) {
       }
 
       json.parse(from: encoded, using: decoder)
-      |> result.map_error(error.InvalidJson)
+      |> result.map_error(error.JsonDecodeError)
     }
   }
 }

@@ -7,7 +7,9 @@ import bravo/uset
 import discord_gleam/discord/intents
 import discord_gleam/event_handler
 import discord_gleam/http/endpoints
+import discord_gleam/internal/error
 import discord_gleam/types/bot
+import discord_gleam/types/channel
 import discord_gleam/types/message
 import discord_gleam/types/reply
 import discord_gleam/types/slash_command
@@ -101,15 +103,26 @@ pub fn send_message(
   endpoints.send_message(bot.token, channel_id, msg)
 }
 
+/// Create a DM channel with a user. \
+/// Returns a channel object, or a DiscordError if it fails.
+pub fn create_dm_channel(
+  bot: bot.Bot,
+  user_id: String,
+) -> Result(channel.Channel, error.DiscordError) {
+  endpoints.create_dm_channel(bot.token, user_id)
+}
+
 /// Send a direct message to a user. \
 /// Same use as `send_message`, but use user_id instead of channel_id. \
 /// `discord_gleam.send_direct_message(bot, "USER_ID", "Hello world!", [])`
+/// 
+/// Note: This will return a DiscordError if the DM channel cant be made
 pub fn send_direct_message(
   bot: bot.Bot,
   user_id: String,
   message: String,
   embeds: List(message.Embed),
-) -> Nil {
+) -> Result(Nil, error.DiscordError) {
   let msg = message.Message(content: message, embeds: embeds)
 
   endpoints.send_direct_message(bot.token, user_id, msg)

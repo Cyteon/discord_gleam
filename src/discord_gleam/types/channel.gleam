@@ -1,9 +1,7 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
 import gleam/dynamic/decode
-import gleam/io
 import gleam/json
 import gleam/option
-import logging
 
 /// See https://discord.com/developers/docs/resources/channel#channel-object
 /// This is a simplified version of the channel object.
@@ -20,7 +18,7 @@ pub type Channel {
   )
 }
 
-pub fn string_to_data(encoded: String) -> Channel {
+pub fn string_to_data(encoded: String) -> Result(Channel, json.DecodeError) {
   let decoder = {
     use id <- decode.field("id", snowflake.decoder())
     use type_ <- decode.field("type", decode.int)
@@ -67,28 +65,5 @@ pub fn string_to_data(encoded: String) -> Channel {
     ))
   }
 
-  let data = json.parse(from: encoded, using: decoder)
-
-  case data {
-    Ok(decoded) -> decoded
-    Error(err) -> {
-      logging.log(
-        logging.Error,
-        "Failed to decode channel object, please make a github issue and attach output",
-      )
-
-      io.debug(err)
-
-      Channel(
-        id: "0",
-        type_: 0,
-        position: option.None,
-        guild_id: option.None,
-        name: option.None,
-        topic: option.None,
-        nsfw: option.None,
-        last_message_id: option.None,
-      )
-    }
-  }
+  json.parse(from: encoded, using: decoder)
 }

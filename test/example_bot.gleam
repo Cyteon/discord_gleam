@@ -5,7 +5,8 @@ import discord_gleam/event_handler
 import discord_gleam/types/bot
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
-import gleam/option.{Some}
+import gleam/io
+import gleam/option.{Some, None}
 import gleam/string
 import logging
 
@@ -61,8 +62,10 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
 
       Nil
     }
+
     event_handler.MessagePacket(message) -> {
-      logging.log(logging.Info, "Message: " <> message.d.content)
+      logging.log(logging.Info, "Got message: " <> message.d.content)
+
       case message.d.author.id != bot.client_id {
         True -> {
           case message.d.content {
@@ -70,13 +73,75 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
               discord_gleam.send_message(bot, message.d.channel_id, "Pong!", [])
             }
 
+            "!dm_channel" -> {
+              let res =
+                discord_gleam.create_dm_channel(bot, message.d.author.id)
+
+              io.debug(res)
+
+              case res {
+                Ok(channel) -> {
+                  discord_gleam.send_message(
+                    bot,
+                    message.d.channel_id,
+                    "ID: "
+                      <> channel.id
+                      <> "\nLast message ID: "
+                      <> case channel.last_message_id {
+                        Some(id) -> id
+                        None -> "None"
+                      },
+                    [],
+                  )
+                }
+
+                Error(err) -> {
+                  discord_gleam.send_message(
+                    bot,
+                    message.d.channel_id,
+                    "Failed to create DM channel!",
+                    [],
+                  )
+
+                  io.debug(err)
+
+                  Nil
+                }
+              }
+            }
+
             "!dm" -> {
-              discord_gleam.send_direct_message(
-                bot,
-                message.d.author.id,
-                "DM!",
-                [],
-              )
+              let res =
+                discord_gleam.send_direct_message(
+                  bot,
+                  message.d.author.id,
+                  "DM!",
+                  [],
+                )
+
+              case res {
+                Ok(_) -> {
+                  discord_gleam.send_message(
+                    bot,
+                    message.d.channel_id,
+                    "DM sent!",
+                    [],
+                  )
+                }
+
+                Error(err) -> {
+                  discord_gleam.send_message(
+                    bot,
+                    message.d.channel_id,
+                    "Failed to send DM!",
+                    [],
+                  )
+
+                  io.debug(err)
+
+                  Nil
+                }
+              }
             }
 
             "!embed" -> {
@@ -91,6 +156,7 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
                 embed1,
               ])
             }
+
             "!reply" -> {
               discord_gleam.reply(
                 bot,
@@ -100,6 +166,7 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
                 [],
               )
             }
+
             "hello" -> {
               discord_gleam.reply(
                 bot,
@@ -151,6 +218,7 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
         }
         _, _ -> Nil
       }
+
       case message.d.content, message.d.guild_id {
         "!ban " <> args, Some(guild_id) -> {
           let args = string.split(args, " ")
@@ -188,6 +256,7 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
         _, _ -> Nil
       }
     }
+
     event_handler.MessageDeletePacket(deleted) -> {
       logging.log(logging.Info, "Deleted message: " <> deleted.d.id)
 
@@ -213,23 +282,29 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
       }
       Nil
     }
+
     event_handler.InteractionCreate(interaction) -> {
       logging.log(logging.Info, "Interaction: " <> interaction.d.data.name)
 
       case interaction.d.data.name {
+        // True will make it ephemeral
         "test" -> {
           discord_gleam.interaction_reply_message(interaction, "test", True)
 
           Nil
         }
+
+        // False wont make it ephemeral
         "test2" -> {
           discord_gleam.interaction_reply_message(interaction, "test2", False)
 
           Nil
         }
+
         _ -> Nil
       }
     }
+
     _ -> Nil
   }
 }

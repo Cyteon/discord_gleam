@@ -14,6 +14,7 @@ import gleam/http
 import gleam/http/response
 import gleam/int
 import gleam/io
+import gleam/json
 import logging
 
 /// Get the current user
@@ -90,17 +91,11 @@ pub fn send_message(
   }
 }
 
-/// Creates a DM channel, then sends a message with `send_message()`.
-pub fn send_direct_message(
+/// Create a DM channel, can be used to send direct messages where a direct message function is not created
+pub fn create_dm_channel(
   token: String,
   user_id: String,
-  message: message.Message,
-) -> Nil {
-  let data = message.to_string(message)
-
-  logging.log(logging.Debug, "Sending DM: " <> data)
-
-  // create a DM channel
+) -> Result(channel.Channel, error.DiscordError) {
   let request =
     request.new_auth_post(
       http.Post,
@@ -113,43 +108,58 @@ pub fn send_direct_message(
     Ok(resp) -> {
       case resp.status {
         200 -> {
-          let channel: channel.Channel = channel.string_to_data(resp.body)
+          logging.log(logging.Debug, "DM channel created")
 
-          case channel.id {
-            "0" -> {
-              logging.log(
-                logging.Error,
-                "Failed to create DM channel, please make a github issue if this is unexpected",
-              )
+          let channel: Result(channel.Channel, json.DecodeError) =
+            channel.string_to_data(resp.body)
+
+          case channel {
+            Ok(channel) -> {
+              Ok(channel)
             }
 
-            value -> {
-              send_message(token, value, message)
+            Error(err) -> {
+              logging.log(logging.Error, "Failed to decode DM channel: ")
+
+              Error(error.JsonDecodeError(err))
             }
           }
-
-          Nil
         }
 
-        _ -> {
-          logging.log(
-            logging.Error,
-            "Failed to create DM channel (status: "
-              <> int.to_string(resp.status)
-              <> "):",
-          )
-          io.debug(resp.body)
-
-          Nil
+        v -> {
+          Error(error.GenericHttpError(status_code: v, body: resp.body))
         }
       }
     }
+    Error(err) -> {
+      Error(error.HttpError(err))
+    }
+  }
+}
+
+/// Creates a DM channel, then sends a message with `send_message()`.
+pub fn send_direct_message(
+  token: String,
+  user_id: String,
+  message: message.Message,
+) -> Result(Nil, error.DiscordError) {
+  let data: String = message.to_string(message)
+  logging.log(logging.Debug, "Sending DM: " <> data)
+
+  let channel: Result(channel.Channel, error.DiscordError) =
+    create_dm_channel(token, user_id)
+
+  case channel {
+    Ok(channel) -> {
+      send_message(token, channel.id, message)
+
+      Ok(Nil)
+    }
 
     Error(err) -> {
-      logging.log(logging.Error, "Failed to create DM channel: ")
-      io.debug(err)
+      logging.log(logging.Error, "Failed to create DM channel")
 
-      Nil
+      Error(err)
     }
   }
 }
