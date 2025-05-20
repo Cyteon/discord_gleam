@@ -1,8 +1,8 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
-import gleam/option.{type Option}
 import gleam/dynamic/decode
 import gleam/io
 import gleam/json
+import gleam/option.{type Option}
 import gleam/result
 import logging
 
@@ -15,11 +15,21 @@ pub type InteractionCreateMember {
 }
 
 pub type InteractionCommand {
-  InteractionCommand(type_: Int, name: String, id: Snowflake, options: Option(List(InteractionOption)))
+  InteractionCommand(
+    type_: Int,
+    name: String,
+    id: Snowflake,
+    options: Option(List(InteractionOption)),
+  )
 }
 
 pub type InteractionOption {
-  InteractionOption(name: String, type_: Int, value: OptionValue, options: Option(List(InteractionOption)))
+  InteractionOption(
+    name: String,
+    type_: Int,
+    value: OptionValue,
+    options: Option(List(InteractionOption)),
+  )
 }
 
 pub type InteractionCreateData {
@@ -48,14 +58,12 @@ fn options_decoder() -> decode.Decoder(InteractionOption) {
   use name <- decode.field("name", decode.string)
   use type_ <- decode.field("type", decode.int)
   use value <- decode.field(
-    "value", 
-    decode.one_of(
-      decode.string |> decode.map(StringValue), or: [
-        decode.int |> decode.map(IntValue),
-        decode.bool |> decode.map(BoolValue),
-        decode.float |> decode.map(FloatValue),
-      ]
-    )
+    "value",
+    decode.one_of(decode.string |> decode.map(StringValue), or: [
+      decode.int |> decode.map(IntValue),
+      decode.bool |> decode.map(BoolValue),
+      decode.float |> decode.map(FloatValue),
+    ]),
   )
 
   use options <- decode.optional_field(

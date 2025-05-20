@@ -2,7 +2,12 @@ import gleam/json
 import gleam/list
 
 pub type CommandOption {
-  CommandOption(name: String, description: String, type_: CommandOptionType, required: Bool)
+  CommandOption(
+    name: String,
+    description: String,
+    type_: CommandOptionType,
+    required: Bool,
+  )
 }
 
 pub type CommandOptionType {
@@ -20,11 +25,7 @@ pub type CommandOptionType {
 }
 
 pub type SlashCommand {
-  SlashCommand(
-    name: String,
-    description: String,
-    options: List(CommandOption),
-  )
+  SlashCommand(name: String, description: String, options: List(CommandOption))
 }
 
 pub fn type_to_int(type_: CommandOptionType) -> Int {

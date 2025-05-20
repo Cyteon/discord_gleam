@@ -36,9 +36,7 @@ pub fn main() {
 
   discord_gleam.register_global_commands(bot, [test_cmd])
 
-  discord_gleam.register_guild_commands(bot, "GUILD_ID", [
-    test_cmd2,
-  ])
+  discord_gleam.register_guild_commands(bot, "GUILD_ID", [test_cmd2])
 
   discord_gleam.run(bot, [event_handler])
 }
@@ -65,14 +63,28 @@ fn event_handler(bot, packet: event_handler.Packet) {
                     _ -> "unexpected value type"
                   }
 
-                  discord_gleam.interaction_reply_message(interaction, "pong: " <> value, False)
+                  discord_gleam.interaction_reply_message(
+                    interaction,
+                    "pong: " <> value,
+                    False,
+                  )
                 }
 
-                Error(_) -> discord_gleam.interaction_reply_message(interaction, "pong", False)
+                Error(_) ->
+                  discord_gleam.interaction_reply_message(
+                    interaction,
+                    "pong",
+                    False,
+                  )
               }
             }
 
-            option.None -> discord_gleam.interaction_reply_message(interaction, "pong", False)
+            option.None ->
+              discord_gleam.interaction_reply_message(
+                interaction,
+                "pong",
+                False,
+              )
           }
 
           Nil

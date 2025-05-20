@@ -6,13 +6,13 @@ import discord_gleam/types/bot
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
 import discord_gleam/ws/packets/interaction_create
-import gleam/io
-import gleam/option.{None, Some}
-import gleam/string
-import gleam/list
+import gleam/bool
 import gleam/float
 import gleam/int
-import gleam/bool
+import gleam/io
+import gleam/list
+import gleam/option.{None, Some}
+import gleam/string
 import logging
 
 pub fn main(token: String, client_id: String, guild_id: String) {
@@ -306,12 +306,14 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
           case interaction.d.data.options {
             Some(options) -> {
               let value = case list.first(options) {
-                Ok(option) -> case option.value {
-                  interaction_create.StringValue(value) -> value
-                  interaction_create.IntValue(value) -> int.to_string(value)
-                  interaction_create.BoolValue(value) -> bool.to_string(value)
-                  interaction_create.FloatValue(value) -> float.to_string(value)
-                }
+                Ok(option) ->
+                  case option.value {
+                    interaction_create.StringValue(value) -> value
+                    interaction_create.IntValue(value) -> int.to_string(value)
+                    interaction_create.BoolValue(value) -> bool.to_string(value)
+                    interaction_create.FloatValue(value) ->
+                      float.to_string(value)
+                  }
 
                 Error(_) -> "No value"
               }
@@ -319,14 +321,15 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
               discord_gleam.interaction_reply_message(
                 interaction,
                 "test: " <> value,
-                True, // ephemeral
+                True,
+                // ephemeral
               )
             }
 
             None -> {
               discord_gleam.interaction_reply_message(
                 interaction,
-                "test: No options", 
+                "test: No options",
                 True,
               )
             }
@@ -339,12 +342,14 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
           case interaction.d.data.options {
             Some(options) -> {
               let value = case list.last(options) {
-                Ok(option) -> case option.value {
-                  interaction_create.StringValue(value) -> value
-                  interaction_create.IntValue(value) -> int.to_string(value)
-                  interaction_create.BoolValue(value) -> bool.to_string(value)
-                  interaction_create.FloatValue(value) -> float.to_string(value)
-                }
+                Ok(option) ->
+                  case option.value {
+                    interaction_create.StringValue(value) -> value
+                    interaction_create.IntValue(value) -> int.to_string(value)
+                    interaction_create.BoolValue(value) -> bool.to_string(value)
+                    interaction_create.FloatValue(value) ->
+                      float.to_string(value)
+                  }
 
                 Error(_) -> "No value"
               }
@@ -352,7 +357,8 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
               discord_gleam.interaction_reply_message(
                 interaction,
                 "test2: " <> value,
-                False, // not ephemeral
+                False,
+                // not ephemeral
               )
             }
 
