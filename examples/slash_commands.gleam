@@ -1,28 +1,27 @@
 import discord_gleam
 import discord_gleam/discord/intents
 import discord_gleam/event_handler
-import discord_gleam/types/message
 import discord_gleam/types/slash_command
+import discord_gleam/ws/packets/interaction_create
 import gleam/list
-import gleam/string
+import gleam/option
 import logging
 
 pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot("YOUR TOKEN", "YOUR CLIENT ID", intents.default())
+  let bot = discord_gleam.bot("TOKEN", "CLIENT_ID", intents.default())
 
   let test_cmd =
     slash_command.SlashCommand(
       name: "ping",
-      type_: 1,
       description: "returns pong",
       options: [
         slash_command.CommandOption(
           name: "test",
-          description: "(options cant be used in events yet)",
-          type_: 3,
+          description: "string yummy",
+          type_: slash_command.StringOption,
           required: False,
         ),
       ],
@@ -31,14 +30,13 @@ pub fn main() {
   let test_cmd2 =
     slash_command.SlashCommand(
       name: "pong",
-      type_: 1,
       description: "returns ping",
       options: [],
     )
 
-  discord_gleam.register_global_commands(bot, "YOUR BOT ID", [test_cmd])
+  discord_gleam.register_global_commands(bot, [test_cmd])
 
-  discord_gleam.register_guild_commands(bot, "YOUR BOT ID", "YOUR GUILD ID", [
+  discord_gleam.register_guild_commands(bot, "GUILD_ID", [
     test_cmd2,
   ])
 
@@ -58,10 +56,28 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
       case interaction.d.data.name {
         "ping" -> {
-          discord_gleam.interaction_reply_message(interaction, "pong", False)
+          case interaction.d.data.options {
+            option.Some(options) -> {
+              case list.first(options) {
+                Ok(option) -> {
+                  let value = case option.value {
+                    interaction_create.StringValue(value) -> value
+                    _ -> "unexpected value type"
+                  }
+
+                  discord_gleam.interaction_reply_message(interaction, "pong: " <> value, False)
+                }
+
+                Error(_) -> discord_gleam.interaction_reply_message(interaction, "pong", False)
+              }
+            }
+
+            option.None -> discord_gleam.interaction_reply_message(interaction, "pong", False)
+          }
 
           Nil
         }
+
         "pong" -> {
           discord_gleam.interaction_reply_message(interaction, "ping", False)
 
