@@ -53,7 +53,5 @@ pub fn from_json_decoder() -> decode.Decoder(User) {
   use discriminator <- decode.field("discriminator", decode.string)
   use avatar <- decode.field("avatar", decode.optional(decode.string))
 
-  decode.success(
-    PartialUser(id:, username:, discriminator:, avatar:)
-  )
+  decode.success(PartialUser(id:, username:, discriminator:, avatar:))
 }

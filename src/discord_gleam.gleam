@@ -11,9 +11,9 @@ import discord_gleam/internal/error
 import discord_gleam/types/bot
 import discord_gleam/types/channel
 import discord_gleam/types/message
+import discord_gleam/types/message_send_response
 import discord_gleam/types/reply
 import discord_gleam/types/slash_command
-import discord_gleam/types/message_send_response
 import discord_gleam/ws/event_loop
 import discord_gleam/ws/packets/interaction_create
 import gleam/list

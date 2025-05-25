@@ -4,10 +4,10 @@ import discord_gleam/http/request
 import discord_gleam/internal/error
 import discord_gleam/types/channel
 import discord_gleam/types/message
+import discord_gleam/types/message_send_response
 import discord_gleam/types/reply
 import discord_gleam/types/slash_command
 import discord_gleam/types/user
-import discord_gleam/types/message_send_response
 import discord_gleam/ws/packets/interaction_create
 import gleam/dynamic
 import gleam/hackney
@@ -60,7 +60,7 @@ pub fn send_message(
       token,
       data,
     )
-  
+
   case hackney.send(request) {
     Ok(resp) -> {
       case resp.status {
@@ -345,7 +345,7 @@ pub fn edit_message(
       case resp.status {
         200 -> {
           logging.log(logging.Debug, "Message edited")
-          
+
           Ok(Nil)
         }
         _ -> {
