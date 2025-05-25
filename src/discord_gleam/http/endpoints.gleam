@@ -7,6 +7,7 @@ import discord_gleam/types/message
 import discord_gleam/types/reply
 import discord_gleam/types/slash_command
 import discord_gleam/types/user
+import discord_gleam/types/message_send_response
 import discord_gleam/ws/packets/interaction_create
 import gleam/dynamic
 import gleam/hackney
@@ -47,7 +48,7 @@ pub fn send_message(
   token: String,
   channel_id: String,
   message: message.Message,
-) -> Nil {
+) -> Result(message_send_response.MessageSendResponse, error.DiscordError) {
   let data = message.to_string(message)
 
   logging.log(logging.Debug, "Sending message: " <> data)
@@ -59,13 +60,16 @@ pub fn send_message(
       token,
       data,
     )
+  
   case hackney.send(request) {
     Ok(resp) -> {
       case resp.status {
         200 -> {
           logging.log(logging.Debug, "Message sent")
-          Nil
+
+          message_send_response.from_json_string(resp.body)
         }
+
         _ -> {
           logging.log(
             logging.Error,
@@ -75,18 +79,20 @@ pub fn send_message(
           )
           io.debug(resp.body)
 
-          Nil
+          Error(error.GenericHttpError(
+            status_code: resp.status,
+            body: resp.body,
+          ))
         }
       }
-
-      Nil
     }
+
     Error(err) -> {
       logging.log(logging.Error, "Failed to send message: ")
       io.println("- Error: ")
       io.debug(err)
 
-      Nil
+      Error(error.HttpError(err))
     }
   }
 }
@@ -151,7 +157,7 @@ pub fn send_direct_message(
 
   case channel {
     Ok(channel) -> {
-      send_message(token, channel.id, message)
+      let _ = send_message(token, channel.id, message)
 
       Ok(Nil)
     }
@@ -311,6 +317,54 @@ pub fn delete_message(
       io.debug(err)
 
       #("FAILED", "ERROR")
+    }
+  }
+}
+
+/// Edit an message by channel id and message id
+pub fn edit_message(
+  token: String,
+  channel_id: String,
+  message_id: String,
+  message: message.Message,
+) -> Result(Nil, error.DiscordError) {
+  let data = message.to_string(message)
+
+  logging.log(logging.Debug, "Editing message: " <> data)
+
+  let request =
+    request.new_auth_post(
+      http.Patch,
+      "/channels/" <> channel_id <> "/messages/" <> message_id,
+      token,
+      data,
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        200 -> {
+          logging.log(logging.Debug, "Message edited")
+          
+          Ok(Nil)
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to edit message")
+          io.debug(resp.body)
+
+          Error(error.GenericHttpError(
+            status_code: resp.status,
+            body: resp.body,
+          ))
+        }
+      }
+    }
+
+    Error(err) -> {
+      logging.log(logging.Error, "Failed to edit message: ")
+      io.debug(err)
+
+      Error(error.HttpError(err))
     }
   }
 }

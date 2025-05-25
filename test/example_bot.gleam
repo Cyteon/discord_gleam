@@ -6,6 +6,7 @@ import discord_gleam/types/bot
 import discord_gleam/types/message
 import discord_gleam/types/slash_command
 import discord_gleam/ws/packets/interaction_create
+import gleam/erlang/process
 import gleam/bool
 import gleam/float
 import gleam/int
@@ -73,7 +74,7 @@ pub fn main(token: String, client_id: String, guild_id: String) {
 fn handler(bot: bot.Bot, packet: event_handler.Packet) {
   case packet {
     event_handler.ReadyPacket(ready) -> {
-      logging.log(logging.Info, "Logged in as " <> ready.d.user.username)
+      logging.log(logging.Info, "Logged in as " <> ready.d.user.username <> "#" <> ready.d.user.discriminator)
 
       Nil
     }
@@ -85,7 +86,49 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
         True -> {
           case message.d.content {
             "!ping" -> {
-              discord_gleam.send_message(bot, message.d.channel_id, "Pong!", [])
+              let _ = discord_gleam.send_message(bot, message.d.channel_id, "Pong!", [])
+
+              Nil
+            }
+
+            "!edit" -> {
+              let msg = discord_gleam.send_message(
+                bot,
+                message.d.channel_id,
+                "This message will be edited in 5 seconds!",
+                [],
+              )
+
+              case msg {
+                Ok(msg) -> {
+                  process.sleep(5000)
+
+                  let _ = discord_gleam.edit_message(
+                    bot,
+                    message.d.channel_id,
+                    msg.id,
+                    "This message has been edited!",
+                    [],
+                  )
+
+                  Nil
+                }
+
+                Error(err) -> {
+                  let _ = discord_gleam.send_message(
+                    bot,
+                    message.d.channel_id,
+                    "Failed to send message!",
+                    [],
+                  )
+
+                  io.debug(err)
+
+                  Nil
+                }
+              }
+
+              Nil
             }
 
             "!dm_channel" -> {
@@ -96,7 +139,7 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
 
               case res {
                 Ok(channel) -> {
-                  discord_gleam.send_message(
+                  let _ = discord_gleam.send_message(
                     bot,
                     message.d.channel_id,
                     "ID: "
@@ -108,10 +151,12 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
                     },
                     [],
                   )
+
+                  Nil
                 }
 
                 Error(err) -> {
-                  discord_gleam.send_message(
+                  let _ = discord_gleam.send_message(
                     bot,
                     message.d.channel_id,
                     "Failed to create DM channel!",
@@ -136,16 +181,18 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
 
               case res {
                 Ok(_) -> {
-                  discord_gleam.send_message(
+                  let _ = discord_gleam.send_message(
                     bot,
                     message.d.channel_id,
                     "DM sent!",
                     [],
                   )
+
+                  Nil
                 }
 
                 Error(err) -> {
-                  discord_gleam.send_message(
+                  let _ = discord_gleam.send_message(
                     bot,
                     message.d.channel_id,
                     "Failed to send DM!",
@@ -167,9 +214,11 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
                   color: 0x00FF00,
                 )
 
-              discord_gleam.send_message(bot, message.d.channel_id, "Embed!", [
+              let _ = discord_gleam.send_message(bot, message.d.channel_id, "Embed!", [
                 embed1,
               ])
+
+              Nil
             }
 
             "!reply" -> {
@@ -191,9 +240,11 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
                 [],
               )
             }
+
             _ -> Nil
           }
         }
+
         False -> Nil
       }
 
@@ -214,23 +265,28 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
 
           case resp.0 {
             "OK" -> {
-              discord_gleam.send_message(
+              let _ = discord_gleam.send_message(
                 bot,
                 message.d.channel_id,
                 "Kicked user!",
                 [],
               )
+
+              Nil
             }
             _ -> {
-              discord_gleam.send_message(
+              let _ = discord_gleam.send_message(
                 bot,
                 message.d.channel_id,
                 "Failed to kick user!",
                 [],
               )
+
+              Nil
             }
           }
         }
+
         _, _ -> Nil
       }
 
@@ -251,23 +307,29 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
 
           case resp.0 {
             "OK" -> {
-              discord_gleam.send_message(
+              let _ = discord_gleam.send_message(
                 bot,
                 message.d.channel_id,
                 "Banned user!",
                 [],
               )
+
+              Nil
             }
+
             _ -> {
-              discord_gleam.send_message(
+              let _ = discord_gleam.send_message(
                 bot,
                 message.d.channel_id,
                 "Failed to ban user!",
                 [],
               )
+
+              Nil
             }
           }
         }
+
         _, _ -> Nil
       }
     }

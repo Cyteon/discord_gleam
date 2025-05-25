@@ -13,6 +13,7 @@ import discord_gleam/types/channel
 import discord_gleam/types/message
 import discord_gleam/types/reply
 import discord_gleam/types/slash_command
+import discord_gleam/types/message_send_response
 import discord_gleam/ws/event_loop
 import discord_gleam/ws/packets/interaction_create
 import gleam/list
@@ -97,7 +98,7 @@ pub fn send_message(
   channel_id: String,
   message: String,
   embeds: List(message.Embed),
-) -> Nil {
+) -> Result(message_send_response.MessageSendResponse, error.DiscordError) {
   let msg = message.Message(content: message, embeds: embeds)
 
   endpoints.send_message(bot.token, channel_id, msg)
@@ -167,6 +168,8 @@ pub fn reply(
 /// 
 ///  discord_gleam.kick_member(bot, "GUILD_ID", "USER_ID", "REASON")
 /// }
+/// 
+/// For an full example, see the `examples/kick.gleam` file.
 pub fn kick_member(
   bot: bot.Bot,
   guild_id: String,
@@ -185,6 +188,25 @@ pub fn ban_member(
   endpoints.ban_member(bot.token, guild_id, user_id, reason)
 }
 
+/// Deletes an message from a channel. \
+/// The reason will be what is shown in the audit log.
+/// 
+/// Example:
+/// ```gleam
+/// import discord_gleam
+/// 
+/// fn main() {
+///  ...
+/// 
+///  discord_gleam.delete_message(
+///   bot,  
+///  "CHANNEL_ID",
+///  "MESSAGE_ID",
+///  "REASON",
+///  )
+/// }
+/// 
+/// For an full example, see the `examples/delete_message.gleam` file.
 pub fn delete_message(
   bot: bot.Bot,
   channel_id: String,
@@ -192,6 +214,20 @@ pub fn delete_message(
   reason: String,
 ) -> #(String, String) {
   endpoints.delete_message(bot.token, channel_id, message_id, reason)
+}
+
+/// Edits an existing message in a channel. \
+/// The message must have been sent by the bot itself.
+pub fn edit_message(
+  bot: bot.Bot,
+  channel_id: String,
+  message_id: String,
+  content: String,
+  embeds: List(message.Embed),
+) -> Result(Nil, error.DiscordError) {
+  let msg = message.Message(content: content, embeds: embeds)
+
+  endpoints.edit_message(bot.token, channel_id, message_id, msg)
 }
 
 /// Wipes all the global slash commands for the bot. \
