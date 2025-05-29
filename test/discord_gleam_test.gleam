@@ -13,7 +13,7 @@ pub fn main() {
       use client_id <- result.try(env.get_string("TEST_BOT_CLIENT_ID"))
       use guild_id <- result.try(env.get_string("TEST_BOT_GUILD_ID"))
 
-      Ok(example_bot.main(token, client_id, guild_id))
+      Ok(example_bot.main())
     }
   {
     Ok(_) -> Nil

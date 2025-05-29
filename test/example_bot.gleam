@@ -62,10 +62,10 @@ pub fn main(token: String, client_id: String, guild_id: String) {
       ],
     )
 
-  discord_gleam.wipe_global_commands(bot)
+  let _ = discord_gleam.wipe_global_commands(bot)
   discord_gleam.register_global_commands(bot, [test_cmd])
 
-  discord_gleam.wipe_guild_commands(bot, guild_id)
+  let _ = discord_gleam.wipe_guild_commands(bot, guild_id)
   discord_gleam.register_guild_commands(bot, guild_id, [test_cmd2])
 
   discord_gleam.run(bot, [handler])
@@ -242,23 +242,27 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
             }
 
             "!reply" -> {
-              discord_gleam.reply(
+              let _ = discord_gleam.reply(
                 bot,
                 message.d.channel_id,
                 message.d.id,
                 "Reply!",
                 [],
               )
+
+              Nil
             }
 
             "hello" -> {
-              discord_gleam.reply(
+              let _ = discord_gleam.reply(
                 bot,
                 message.d.channel_id,
                 message.d.id,
                 "hello",
                 [],
               )
+
+              Nil
             }
 
             _ -> Nil
@@ -283,8 +287,8 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
 
           let resp = discord_gleam.kick_member(bot, guild_id, user, reason)
 
-          case resp.0 {
-            "OK" -> {
+          case resp {
+            Ok(_) -> {
               let _ =
                 discord_gleam.send_message(
                   bot,
@@ -295,7 +299,8 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
 
               Nil
             }
-            _ -> {
+
+            Error(_) -> {
               let _ =
                 discord_gleam.send_message(
                   bot,
@@ -327,8 +332,8 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
 
           let resp = discord_gleam.ban_member(bot, guild_id, user, reason)
 
-          case resp.0 {
-            "OK" -> {
+          case resp {
+            Ok(_) -> {
               let _ =
                 discord_gleam.send_message(
                   bot,
@@ -340,7 +345,7 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
               Nil
             }
 
-            _ -> {
+            Error(_) -> {
               let _ =
                 discord_gleam.send_message(
                   bot,
