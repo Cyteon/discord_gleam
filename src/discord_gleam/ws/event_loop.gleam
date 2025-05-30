@@ -131,6 +131,9 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
     )
     |> stratus.on_close(fn(_) {
       logging.log(logging.Error, "oh nyo, discord closed websocket :c")
+      uset.delete(state_uset)
+
+      Nil
     })
 
   let assert Ok(subj) = stratus.initialize(builder)

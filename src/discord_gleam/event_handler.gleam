@@ -4,6 +4,7 @@ import discord_gleam/ws/packets/generic
 import discord_gleam/ws/packets/interaction_create
 import discord_gleam/ws/packets/message
 import discord_gleam/ws/packets/message_delete
+import discord_gleam/ws/packets/message_update
 import discord_gleam/ws/packets/ready
 import gleam/list
 import gleam/option
@@ -14,6 +15,7 @@ pub type EventHandler =
 
 pub type Packet {
   MessagePacket(message.MessagePacket)
+  MessageUpdatePacket(message_update.MessageUpdatePacket)
   ReadyPacket(ready.ReadyPacket)
   UnknownPacket(generic.GenericPacket)
   MessageDeletePacket(message_delete.MessageDeletePacket)
@@ -29,12 +31,28 @@ fn internal_handler(bot: bot.Bot, packet: Packet) -> Nil {
 
           Nil
         }
+
         option.None -> {
           Nil
         }
       }
       Nil
     }
+
+    MessageUpdatePacket(msg) -> {
+      case bot.cache.messages {
+        option.Some(cache) -> {
+          uset.insert(cache, [#(msg.d.id, msg.d)])
+
+          Nil
+        }
+
+        option.None -> {
+          Nil
+        }
+      }
+    }
+
     _ -> Nil
   }
 }
@@ -61,6 +79,10 @@ fn decode_packet(msg: String) -> Packet {
     "MESSAGE_CREATE" ->
       message.string_to_data(msg)
       |> result.map(MessagePacket)
+      |> result.unwrap(UnknownPacket(generic_packet))
+    "MESSAGE_UPDATE" ->
+      message_update.string_to_data(msg)
+      |> result.map(MessageUpdatePacket)
       |> result.unwrap(UnknownPacket(generic_packet))
     "READY" ->
       ready.string_to_data(msg)

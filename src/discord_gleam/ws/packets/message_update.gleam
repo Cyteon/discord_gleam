@@ -1,25 +1,16 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
+import discord_gleam/types/user
+import discord_gleam/ws/packets/message
 import gleam/dynamic/decode
 import gleam/json
-import discord_gleam/types/user
 import gleam/option.{type Option, None, Some}
 import gleam/result
 
-pub type MessagePacketData {
-  MessagePacketData(
-    content: String,
-    id: Snowflake,
-    guild_id: Option(Snowflake),
-    channel_id: Snowflake,
-    author: user.User,
-  )
+pub type MessageUpdatePacket {
+  MessageUpdatePacket(t: String, s: Int, op: Int, d: message.MessagePacketData)
 }
 
-pub type MessagePacket {
-  MessagePacket(t: String, s: Int, op: Int, d: MessagePacketData)
-}
-
-pub fn string_to_data(encoded: String) -> Result(MessagePacket, String) {
+pub fn string_to_data(encoded: String) -> Result(MessageUpdatePacket, String) {
   let decoder = {
     use t <- decode.field("t", decode.string)
     use s <- decode.field("s", decode.int)
@@ -34,7 +25,7 @@ pub fn string_to_data(encoded: String) -> Result(MessagePacket, String) {
       )
       use channel_id <- decode.field("channel_id", snowflake.decoder())
       use author <- decode.field("author", user.from_json_decoder())
-      decode.success(MessagePacketData(
+      decode.success(message.MessagePacketData(
         content:,
         id:,
         guild_id:,
@@ -42,9 +33,9 @@ pub fn string_to_data(encoded: String) -> Result(MessagePacket, String) {
         author:,
       ))
     })
-    decode.success(MessagePacket(t:, s:, op:, d:))
+    decode.success(MessageUpdatePacket(t:, s:, op:, d:))
   }
 
   json.parse(from: encoded, using: decoder)
-  |> result.map_error(fn(_) { "Failed to decode MessagePacket" })
+  |> result.map_error(fn(_) { "Failed to decode MessageUpdatePacket" })
 }
