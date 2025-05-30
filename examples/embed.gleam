@@ -10,7 +10,7 @@ pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot("YOUR TOKEN", "YOUR CLIENT ID", intents.default())
+  let bot = discord_gleam.bot("TOKEN", "CLIENT ID", intents.default())
 
   discord_gleam.run(bot, [event_handler])
 }
@@ -36,6 +36,8 @@ fn event_handler(bot, packet: event_handler.Packet) {
           discord_gleam.send_message(bot, message.d.channel_id, "Embed!", [
             embed1,
           ])
+
+          Nil
         }
         _ -> Nil
       }
