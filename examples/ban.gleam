@@ -2,10 +2,10 @@ import discord_gleam
 import discord_gleam/discord/intents
 import discord_gleam/event_handler
 import discord_gleam/types/message
-import gleam/list
-import gleam/string
 import gleam/io
+import gleam/list
 import gleam/option
+import gleam/string
 import logging
 
 pub fn main() {
@@ -48,8 +48,7 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
           case message.d.guild_id {
             option.Some(id) -> {
-              let resp =
-                discord_gleam.ban_member(bot, id, user, reason)
+              let resp = discord_gleam.ban_member(bot, id, user, reason)
 
               case resp {
                 Ok(_) -> {

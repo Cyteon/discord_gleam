@@ -242,25 +242,27 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
             }
 
             "!reply" -> {
-              let _ = discord_gleam.reply(
-                bot,
-                message.d.channel_id,
-                message.d.id,
-                "Reply!",
-                [],
-              )
+              let _ =
+                discord_gleam.reply(
+                  bot,
+                  message.d.channel_id,
+                  message.d.id,
+                  "Reply!",
+                  [],
+                )
 
               Nil
             }
 
             "hello" -> {
-              let _ = discord_gleam.reply(
-                bot,
-                message.d.channel_id,
-                message.d.id,
-                "hello",
-                [],
-              )
+              let _ =
+                discord_gleam.reply(
+                  bot,
+                  message.d.channel_id,
+                  message.d.id,
+                  "hello",
+                  [],
+                )
 
               Nil
             }

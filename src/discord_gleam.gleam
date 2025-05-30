@@ -238,7 +238,10 @@ pub fn wipe_global_commands(bot: bot.Bot) -> Result(Nil, error.DiscordError) {
 
 /// Wipes all the guild slash commands for the bot. \
 /// Restarting your client might be required to see the changes. \
-pub fn wipe_guild_commands(bot: bot.Bot, guild_id: String) -> Result(Nil, error.DiscordError) {
+pub fn wipe_guild_commands(
+  bot: bot.Bot,
+  guild_id: String,
+) -> Result(Nil, error.DiscordError) {
   endpoints.wipe_guild_commands(bot.token, bot.client_id, guild_id)
 }
 

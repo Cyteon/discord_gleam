@@ -170,7 +170,11 @@ pub fn send_direct_message(
 }
 
 /// Reply to a message
-pub fn reply(token: String, channel_id: String, message: reply.Reply) -> Result(Nil, error.DiscordError) {
+pub fn reply(
+  token: String,
+  channel_id: String,
+  message: reply.Reply,
+) -> Result(Nil, error.DiscordError) {
   let data = reply.to_string(message)
 
   logging.log(logging.Debug, "Replying: " <> data)
@@ -188,7 +192,7 @@ pub fn reply(token: String, channel_id: String, message: reply.Reply) -> Result(
       case resp.status {
         200 -> {
           logging.log(logging.Debug, "Reply sent")
-          
+
           Ok(Nil)
         }
         _ -> {
@@ -312,12 +316,12 @@ pub fn delete_message(
       case resp.status {
         204 -> {
           logging.log(logging.Debug, "Deleted Message")
-          
+
           Ok(Nil)
         }
         _ -> {
           logging.log(logging.Error, "Failed to delete message")
-          
+
           Error(error.GenericHttpError(
             status_code: resp.status,
             body: resp.body,
@@ -327,7 +331,7 @@ pub fn delete_message(
     }
     Error(err) -> {
       logging.log(logging.Error, "Failed to delete message")
-      
+
       Error(error.HttpError(err))
     }
   }
@@ -399,12 +403,12 @@ pub fn wipe_global_commands(
       case resp.status {
         200 -> {
           logging.log(logging.Debug, "Wiped global commands")
-          
+
           Ok(Nil)
         }
         _ -> {
           logging.log(logging.Error, "Failed to wipe global commands")
-          
+
           Error(error.GenericHttpError(
             status_code: resp.status,
             body: resp.body,
@@ -414,7 +418,7 @@ pub fn wipe_global_commands(
     }
     Error(err) -> {
       logging.log(logging.Error, "Failed to wipe global commands")
-      
+
       Error(error.HttpError(err))
     }
   }
@@ -439,12 +443,12 @@ pub fn wipe_guild_commands(
       case resp.status {
         200 -> {
           logging.log(logging.Debug, "Wiped guild commands")
-         
+
           Ok(Nil)
         }
         _ -> {
           logging.log(logging.Error, "Failed to wipe guild commands")
-          
+
           Error(error.GenericHttpError(
             status_code: resp.status,
             body: resp.body,
@@ -479,13 +483,13 @@ pub fn register_global_command(
       case resp.status {
         201 -> {
           logging.log(logging.Debug, "Added global command " <> command.name)
-         
+
           Ok(Nil)
         }
 
         200 -> {
           logging.log(logging.Debug, "Updated global command " <> command.name)
-          
+
           Ok(Nil)
         }
 
@@ -502,9 +506,12 @@ pub fn register_global_command(
         }
       }
     }
-    
+
     Error(err) -> {
-      logging.log(logging.Error, "Failed to add global command " <> command.name)
+      logging.log(
+        logging.Error,
+        "Failed to add global command " <> command.name,
+      )
 
       Error(error.HttpError(err))
     }
@@ -531,13 +538,13 @@ pub fn register_guild_command(
       case resp.status {
         201 -> {
           logging.log(logging.Debug, "Added guild command " <> command.name)
-          
+
           Ok(Nil)
         }
 
         200 -> {
           logging.log(logging.Debug, "Updated guild command " <> command.name)
-          
+
           Ok(Nil)
         }
 
@@ -546,7 +553,7 @@ pub fn register_guild_command(
             logging.Error,
             "Failed to add guild command " <> command.name,
           )
-          
+
           Error(error.GenericHttpError(
             status_code: resp.status,
             body: resp.body,
@@ -556,7 +563,7 @@ pub fn register_guild_command(
     }
     Error(err) -> {
       logging.log(logging.Error, "Failed to add guild command " <> command.name)
-      
+
       Error(error.HttpError(err))
     }
   }
@@ -584,7 +591,7 @@ pub fn interaction_send_text(
       case resp.status {
         204 -> {
           logging.log(logging.Debug, "Sent Interaction Response")
-          
+
           Ok(Nil)
         }
 
@@ -600,7 +607,7 @@ pub fn interaction_send_text(
     }
     Error(err) -> {
       logging.log(logging.Error, "Error when sending Interaction Response")
-      
+
       Error(error.HttpError(err))
     }
   }

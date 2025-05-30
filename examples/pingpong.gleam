@@ -19,7 +19,7 @@ fn event_handler(bot, packet: event_handler.Packet) {
   case packet {
     event_handler.MessagePacket(message) -> {
       logging.log(logging.Info, "Message: " <> message.d.content)
-      
+
       case message.d.content {
         "!ping" -> {
           discord_gleam.send_message(bot, message.d.channel_id, "Pong!", [])

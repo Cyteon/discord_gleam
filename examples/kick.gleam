@@ -3,7 +3,7 @@ import discord_gleam/discord/intents
 import discord_gleam/event_handler
 import discord_gleam/types/message
 import gleam/list
-import gleam/option.{Some, None}
+import gleam/option.{None, Some}
 import gleam/string
 import logging
 
@@ -45,7 +45,8 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
           case message.d.guild_id {
             Some(guild_id) -> {
-              let result = discord_gleam.kick_member(bot, guild_id, user, reason)
+              let result =
+                discord_gleam.kick_member(bot, guild_id, user, reason)
 
               case result {
                 Ok(_) -> {
