@@ -492,7 +492,7 @@ pub fn register_global_command(
         _ -> {
           logging.log(
             logging.Error,
-            "Failed to add global command" <> command.name,
+            "Failed to add global command " <> command.name,
           )
 
           Error(error.GenericHttpError(
@@ -502,8 +502,9 @@ pub fn register_global_command(
         }
       }
     }
+    
     Error(err) -> {
-      logging.log(logging.Error, "Failed to add global command" <> command.name)
+      logging.log(logging.Error, "Failed to add global command " <> command.name)
 
       Error(error.HttpError(err))
     }
@@ -543,7 +544,7 @@ pub fn register_guild_command(
         _ -> {
           logging.log(
             logging.Error,
-            "Failed to add guild command" <> command.name,
+            "Failed to add guild command " <> command.name,
           )
           
           Error(error.GenericHttpError(
@@ -554,7 +555,7 @@ pub fn register_guild_command(
       }
     }
     Error(err) -> {
-      logging.log(logging.Error, "Failed to add guild command" <> command.name)
+      logging.log(logging.Error, "Failed to add guild command " <> command.name)
       
       Error(error.HttpError(err))
     }
