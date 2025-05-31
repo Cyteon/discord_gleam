@@ -25,7 +25,7 @@ pub fn string_to_data(encoded: String) -> Result(MessageUpdatePacket, String) {
       )
       use channel_id <- decode.field("channel_id", snowflake.decoder())
       use author <- decode.field("author", user.from_json_decoder())
-      
+
       decode.success(message.MessagePacketData(
         content:,
         id:,
