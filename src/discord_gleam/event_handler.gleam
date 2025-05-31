@@ -13,15 +13,22 @@ import gleam/result
 pub type EventHandler =
   fn(bot.Bot, Packet) -> Nil
 
+/// We currently only have some packets, need more
 pub type Packet {
+  /// `MESSAGE_CREATE` event
   MessagePacket(message.MessagePacket)
+  /// `MESSAGE_UPDATE` event
   MessageUpdatePacket(message_update.MessageUpdatePacket)
+  /// `READY` event
   ReadyPacket(ready.ReadyPacket)
-  UnknownPacket(generic.GenericPacket)
+  /// `MESSAGE_DELETE` event
   MessageDeletePacket(message_delete.MessageDeletePacket)
+  /// `INTERACTION_CREATE` event
   InteractionCreate(interaction_create.InteractionCreate)
+  UnknownPacket(generic.GenericPacket)
 }
 
+/// For handling some events the library needs to handle, for functionality
 fn internal_handler(bot: bot.Bot, packet: Packet) -> Nil {
   case packet {
     MessagePacket(msg) -> {

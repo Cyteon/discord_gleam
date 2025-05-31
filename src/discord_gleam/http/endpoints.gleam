@@ -1,5 +1,6 @@
 //// Low-level functions for interacting with the Discord API. \
 //// Preferrably use the higher-level functions in src/discord_gleam.gleam.
+
 import discord_gleam/http/request
 import discord_gleam/internal/error
 import discord_gleam/types/channel

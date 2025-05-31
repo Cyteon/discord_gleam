@@ -1,3 +1,6 @@
+//// Event loop for handling the discord gateway websocket
+//// Dispatches events to registered event handlers
+
 import bravo
 import bravo/uset
 import discord_gleam/event_handler
