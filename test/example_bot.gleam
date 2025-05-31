@@ -88,8 +88,7 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
     event_handler.MessageUpdatePacket(message_update) -> {
       logging.log(
         logging.Info,
-        "Edit message, new content: "
-          <> message_update.d.content
+        "Edit message, new content: " <> message_update.d.content,
       )
     }
 
