@@ -1,5 +1,5 @@
-/// Low-level functions for interacting with the Discord API. \
-/// Preferrably use the higher-level functions in src/discord_gleam.gleam.
+//// Low-level functions for interacting with the Discord API. \
+//// Preferrably use the higher-level functions in src/discord_gleam.gleam.
 import discord_gleam/http/request
 import discord_gleam/internal/error
 import discord_gleam/types/channel
@@ -58,7 +58,7 @@ pub fn send_message(
   logging.log(logging.Debug, "Sending message: " <> data)
 
   let request =
-    request.new_auth_post(
+    request.new_auth_with_body(
       http.Post,
       "/channels/" <> channel_id <> "/messages",
       token,
@@ -99,7 +99,7 @@ pub fn create_dm_channel(
   user_id: String,
 ) -> Result(channel.Channel, error.DiscordError) {
   let request =
-    request.new_auth_post(
+    request.new_auth_with_body(
       http.Post,
       "/users/@me/channels",
       token,
@@ -180,7 +180,7 @@ pub fn reply(
   logging.log(logging.Debug, "Replying: " <> data)
 
   let request =
-    request.new_auth_post(
+    request.new_auth_with_body(
       http.Post,
       "/channels/" <> channel_id <> "/messages",
       token,
@@ -349,7 +349,7 @@ pub fn edit_message(
   logging.log(logging.Debug, "Editing message: " <> data)
 
   let request =
-    request.new_auth_post(
+    request.new_auth_with_body(
       http.Patch,
       "/channels/" <> channel_id <> "/messages/" <> message_id,
       token,
@@ -391,7 +391,7 @@ pub fn wipe_global_commands(
   client_id: String,
 ) -> Result(Nil, error.DiscordError) {
   let request =
-    request.new_auth_post(
+    request.new_auth_with_body(
       http.Put,
       "/applications/" <> client_id <> "/commands",
       token,
@@ -431,7 +431,7 @@ pub fn wipe_guild_commands(
   guild_id: String,
 ) -> Result(Nil, error.DiscordError) {
   let request =
-    request.new_auth_post(
+    request.new_auth_with_body(
       http.Put,
       "/applications/" <> client_id <> "/guilds/" <> guild_id <> "/commands",
       token,
@@ -471,7 +471,7 @@ pub fn register_global_command(
   command: slash_command.SlashCommand,
 ) -> Result(Nil, error.DiscordError) {
   let request =
-    request.new_auth_post(
+    request.new_auth_with_body(
       http.Post,
       "/applications/" <> client_id <> "/commands",
       token,
@@ -526,7 +526,7 @@ pub fn register_guild_command(
   command: slash_command.SlashCommand,
 ) -> Result(Nil, error.DiscordError) {
   let request =
-    request.new_auth_post(
+    request.new_auth_with_body(
       http.Post,
       "/applications/" <> client_id <> "/guilds/" <> guild_id <> "/commands",
       token,
@@ -576,7 +576,7 @@ pub fn interaction_send_text(
   ephemeral: Bool,
 ) -> Result(Nil, error.DiscordError) {
   let request =
-    request.new_post(
+    request.new_with_body(
       http.Post,
       "/interactions/"
         <> interaction.d.id

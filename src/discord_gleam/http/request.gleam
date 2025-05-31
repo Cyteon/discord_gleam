@@ -1,6 +1,9 @@
+//// This module contains functions to create http requests to discord
+
 import gleam/http
 import gleam/http/request
 
+/// Create a base request to discord
 pub fn new(method: http.Method, path: String) -> request.Request(String) {
   request.new()
   |> request.set_method(method)
@@ -9,12 +12,12 @@ pub fn new(method: http.Method, path: String) -> request.Request(String) {
   |> request.prepend_header("accept", "application/json")
   |> request.prepend_header(
     "User-Agent",
-    "DiscordBot (https://github.com/cyteon/discord_gleam, 0.2.3)",
+    "DiscordBot (https://github.com/cyteon/discord_gleam, 1.0.0)",
   )
 }
 
-/// We have this to send post requests
-pub fn new_post(
+/// Create an unauthenticated request, with a body
+pub fn new_with_body(
   method: http.Method,
   path: String,
   data: String,
@@ -24,7 +27,7 @@ pub fn new_post(
   |> request.prepend_header("Content-Type", "application/json")
 }
 
-/// Some endpoints requires token authentication
+/// Create an unauthenticated request
 pub fn new_auth(
   method: http.Method,
   path: String,
@@ -34,8 +37,8 @@ pub fn new_auth(
   |> request.prepend_header("Authorization", "Bot " <> token)
 }
 
-/// We have this to send post requests with token authentication
-pub fn new_auth_post(
+/// Create an authenticated request, with a body
+pub fn new_auth_with_body(
   method: http.Method,
   path: String,
   token: String,
@@ -47,7 +50,7 @@ pub fn new_auth_post(
   |> request.prepend_header("Content-Type", "application/json")
 }
 
-/// Some endpoints requires token authentication
+/// Create an authenticated request with a custom header
 pub fn new_auth_with_header(
   method: http.Method,
   path: String,
