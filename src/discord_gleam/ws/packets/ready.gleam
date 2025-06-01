@@ -8,7 +8,12 @@ pub type ReadyUser {
 }
 
 pub type ReadyData {
-  ReadyData(v: Int, user: ReadyUser)
+  ReadyData(
+    v: Int,
+    user: ReadyUser,
+    session_id: String,
+    resume_gateway_url: String,
+  )
 }
 
 pub type ReadyPacket {
@@ -20,8 +25,10 @@ pub fn string_to_data(encoded: String) -> Result(ReadyPacket, String) {
     use t <- decode.field("t", decode.string)
     use s <- decode.field("s", decode.int)
     use op <- decode.field("op", decode.int)
+
     use d <- decode.field("d", {
       use v <- decode.field("v", decode.int)
+
       use user <- decode.field("user", {
         use username <- decode.field("username", decode.string)
         use id <- decode.field("id", snowflake.decoder())
@@ -29,8 +36,16 @@ pub fn string_to_data(encoded: String) -> Result(ReadyPacket, String) {
         use bot <- decode.field("bot", decode.bool)
         decode.success(ReadyUser(username:, id:, discriminator:, bot:))
       })
-      decode.success(ReadyData(v:, user:))
+
+      use session_id <- decode.field("session_id", decode.string)
+      use resume_gateway_url <- decode.field(
+        "resume_gateway_url",
+        decode.string,
+      )
+
+      decode.success(ReadyData(v:, user:, session_id:, resume_gateway_url:))
     })
+
     decode.success(ReadyPacket(t:, s:, op:, d:))
   }
 

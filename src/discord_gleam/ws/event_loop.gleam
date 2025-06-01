@@ -15,6 +15,7 @@ import gleam/http/request
 import gleam/int
 import gleam/option
 import gleam/otp/actor
+import gleam/string
 import logging
 import repeatedly
 import stratus
@@ -29,16 +30,23 @@ pub type State {
 }
 
 /// Start the event loop, with a set of event handlers.
-pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
+pub fn main(
+  bot: bot.Bot,
+  event_handlers: List(event_handler.EventHandler),
+  host: String,
+  reconnect: Bool,
+  session_id: String,
+  state_uset: uset.USet(#(String, String)),
+) -> Nil {
   logging.log(logging.Debug, "Requesting gateway")
 
-  let assert Ok(state_uset) = uset.new("State", 1, bravo.Public)
+  uset.insert(state_uset, [#("sequence", "0")])
 
-  uset.insert(state_uset, [#("sequence", 0)])
+  let host = string.replace(host, "wss://", "")
 
   let req =
     request.new()
-    |> request.set_host("gateway.discord.gg")
+    |> request.set_host(host)
     |> request.set_scheme(http.Https)
     |> request.set_path("/?v=10&encoding=json")
     |> request.set_header(
@@ -63,10 +71,24 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
       loop: fn(msg, state, conn) {
         case msg {
           stratus.Text(msg) -> {
-            logging.log(logging.Debug, msg)
+            logging.log(logging.Debug, "Gateway text msg: " <> msg)
+
             case state.has_received_hello {
               False -> {
-                let identify = identify.create_packet(bot.token, bot.intents)
+                let identify = case reconnect {
+                  True ->
+                    identify.create_resume_packet(
+                      bot.token,
+                      bot.intents,
+                      session_id,
+                      case uset.lookup(state_uset, "sequence") {
+                        Ok(s) -> s.1
+                        Error(_) -> "0"
+                      },
+                    )
+
+                  False -> identify.create_packet(bot.token, bot.intents)
+                }
                 let _ = stratus.send_text_message(conn, identify)
 
                 let new_state = State(has_received_hello: True, s: 0)
@@ -76,15 +98,13 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
                 process.start(
                   fn() {
                     repeatedly.call(heartbeat, Nil, fn(_state, _count_) {
-                      let sequence = case uset.lookup(state_uset, "sequence") {
-                        Ok(sequence) -> sequence.1
-                        Error(_) -> 0
+                      let s = case uset.lookup(state_uset, "sequence") {
+                        Ok(s) -> s.1
+                        Error(_) -> "0"
                       }
 
                       let packet =
-                        "{\"op\": 1, \"d\": null, \"s\": "
-                        <> int.to_string(sequence)
-                        <> "}"
+                        "{\"op\": 1, \"d\": null, \"s\": " <> s <> "}"
 
                       logging.log(
                         logging.Debug,
@@ -106,25 +126,50 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
                   0 -> Nil
 
                   _ -> {
-                    uset.insert(state_uset, [#("sequence", generic_packet.s)])
+                    uset.insert(state_uset, [
+                      #("sequence", int.to_string(generic_packet.s)),
+                    ])
 
                     Nil
                   }
                 }
 
+                case generic_packet.op {
+                  7 -> {
+                    logging.log(logging.Debug, "Received a reconnect request")
+                    stratus.close(conn)
+
+                    main(
+                      bot,
+                      event_handlers,
+                      host,
+                      reconnect,
+                      case uset.lookup(state_uset, "session_id") {
+                        Ok(s) -> s.1
+                        Error(_) -> ""
+                      },
+                      state_uset,
+                    )
+                  }
+
+                  _ -> Nil
+                }
+
                 let new_state =
                   State(has_received_hello: True, s: generic_packet.s)
 
-                event_handler.handle_event(bot, msg, event_handlers)
+                event_handler.handle_event(bot, msg, event_handlers, state_uset)
 
                 actor.continue(new_state)
               }
             }
           }
+
           stratus.User(msg) -> {
-            logging.log(logging.Debug, msg)
+            logging.log(logging.Debug, "Gateway user msg: " <> msg)
             actor.continue(state)
           }
+
           stratus.Binary(_) -> {
             logging.log(logging.Debug, "Binary message")
             actor.continue(state)
@@ -133,7 +178,7 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
       },
     )
     |> stratus.on_close(fn(_) {
-      logging.log(logging.Error, "oh nyo, discord closed websocket :c")
+      logging.log(logging.Error, "The webhook was closed")
       uset.delete(state_uset)
 
       Nil
@@ -148,7 +193,7 @@ pub fn main(bot: bot.Bot, event_handlers: List(event_handler.EventHandler)) {
   )
   |> process.select_forever
 
-  process.sleep(10_000)
+  logging.log(logging.Error, "websocket go bye bye")
 
-  logging.log(logging.Info, "websocket go bye bye")
+  process.sleep(1000)
 }

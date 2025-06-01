@@ -29,7 +29,11 @@ pub type Packet {
 }
 
 /// For handling some events the library needs to handle, for functionality
-fn internal_handler(bot: bot.Bot, packet: Packet) -> Nil {
+fn internal_handler(
+  bot: bot.Bot,
+  packet: Packet,
+  state_uset: uset.USet(#(String, String)),
+) -> Nil {
   case packet {
     MessagePacket(msg) -> {
       case bot.cache.messages {
@@ -60,6 +64,15 @@ fn internal_handler(bot: bot.Bot, packet: Packet) -> Nil {
       }
     }
 
+    ReadyPacket(ready) -> {
+      uset.insert(state_uset, [#("session_id", ready.d.session_id)])
+      uset.insert(state_uset, [
+        #("resume_gateway_url", ready.d.resume_gateway_url),
+      ])
+
+      Nil
+    }
+
     _ -> Nil
   }
 }
@@ -69,13 +82,10 @@ pub fn handle_event(
   bot: bot.Bot,
   msg: String,
   handlers: List(EventHandler),
+  state_uset: uset.USet(#(String, String)),
 ) -> Nil {
   let packet = decode_packet(msg)
-
-  case packet {
-    UnknownPacket(_) -> Nil
-    _ -> internal_handler(bot, packet)
-  }
+  internal_handler(bot, packet, state_uset)
 
   list.each(handlers, fn(handler) { handler(bot, packet) })
 }

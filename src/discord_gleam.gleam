@@ -74,7 +74,16 @@ pub fn run(
   bot: bot.Bot,
   event_handlers: List(event_handler.EventHandler),
 ) -> Nil {
-  event_loop.main(bot, event_handlers)
+  let assert Ok(state_uset) = uset.new("State", 1, bravo.Public)
+
+  event_loop.main(
+    bot,
+    event_handlers,
+    "gateway.discord.gg",
+    False,
+    "",
+    state_uset,
+  )
 }
 
 /// Send a message to a channel.
