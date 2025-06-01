@@ -19,6 +19,9 @@ import gleam/string
 import logging
 import repeatedly
 import stratus
+import birl/duration
+import birl
+import gleam/order
 
 pub type Msg {
   Close
@@ -61,6 +64,8 @@ pub fn main(
   logging.log(logging.Debug, "Creating builder")
 
   let initial_state = State(has_received_hello: False, s: 0)
+  let last_connect = birl.now()
+
   let builder =
     stratus.websocket(
       request: req,
@@ -142,7 +147,10 @@ pub fn main(
                     main(
                       bot,
                       event_handlers,
-                      host,
+                      case uset.lookup(state_uset, "resume_gateway_url") {
+                        Ok(url) -> url.1
+                        Error(_) -> "gateway.discord.gg"
+                      },
                       reconnect,
                       case uset.lookup(state_uset, "session_id") {
                         Ok(s) -> s.1
@@ -178,8 +186,35 @@ pub fn main(
       },
     )
     |> stratus.on_close(fn(_) {
-      logging.log(logging.Error, "The webhook was closed")
-      uset.delete(state_uset)
+      logging.log(logging.Debug, "The webhook was closed")
+      
+      let diff = birl.difference(last_connect, birl.now())
+      
+      case duration.compare(diff, duration.minutes(1)) {
+        order.Gt -> {
+          logging.log(logging.Debug, "Over 1 minute since connection, reconnecting")
+
+          main(
+            bot,
+            event_handlers,
+            case uset.lookup(state_uset, "resume_gateway_url") {
+              Ok(url) -> url.1
+              Error(_) -> "gateway.discord.gg"
+            },
+            reconnect,
+            case uset.lookup(state_uset, "session_id") {
+              Ok(s) -> s.1
+              Error(_) -> ""
+            },
+            state_uset,
+          )
+        }
+
+        _ -> {
+          logging.log(logging.Error, "Disconnected after too short time, not reconnecting")
+          Nil
+        }
+      }
 
       Nil
     })
