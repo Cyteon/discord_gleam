@@ -5,6 +5,7 @@
 import gleam/dynamic/decode
 import gleam/int
 
+/// We are representing Discord's snowflake as a string
 pub type Snowflake =
   String
 

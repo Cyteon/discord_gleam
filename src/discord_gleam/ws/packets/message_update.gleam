@@ -38,5 +38,5 @@ pub fn string_to_data(encoded: String) -> Result(MessageUpdatePacket, String) {
   }
 
   json.parse(from: encoded, using: decoder)
-  |> result.map_error(fn(_) { "Failed to decode MessageUpdatePacket" })
+  |> result.map_error(fn(_) { "Failed to decode MessageUpdate packet" })
 }

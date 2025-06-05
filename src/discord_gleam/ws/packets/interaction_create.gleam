@@ -114,9 +114,5 @@ pub fn string_to_data(encoded: String) -> Result(InteractionCreate, String) {
   }
 
   json.parse(from: encoded, using: decoder)
-  |> result.map_error(fn(err) {
-    logging.log(logging.Error, "Failed to decode InteractionCreate: ")
-    io.debug(err)
-    "Failed to decode InteractionCreate"
-  })
+  |> result.map_error(fn(_) { "Failed to decode InteractionCreate packet" })
 }

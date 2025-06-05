@@ -41,5 +41,5 @@ pub fn string_to_data(encoded: String) -> Result(ReadyPacket, String) {
   }
 
   json.parse(from: encoded, using: decoder)
-  |> result.map_error(fn(_) { "Failed to decode MessagePacket" })
+  |> result.map_error(fn(_) { "Failed to decode Ready packet" })
 }
