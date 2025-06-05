@@ -1,6 +1,8 @@
 //// Event loop for handling the discord gateway websocket
 //// Dispatches events to registered event handlers
 
+import birl
+import birl/duration
 import bravo
 import bravo/uset
 import discord_gleam/event_handler
@@ -14,14 +16,12 @@ import gleam/http
 import gleam/http/request
 import gleam/int
 import gleam/option
+import gleam/order
 import gleam/otp/actor
 import gleam/string
 import logging
 import repeatedly
 import stratus
-import birl/duration
-import birl
-import gleam/order
 
 pub type Msg {
   Close
@@ -187,12 +187,15 @@ pub fn main(
     )
     |> stratus.on_close(fn(_) {
       logging.log(logging.Debug, "The webhook was closed")
-      
+
       let diff = birl.difference(last_connect, birl.now())
-      
+
       case duration.compare(diff, duration.minutes(1)) {
         order.Gt -> {
-          logging.log(logging.Debug, "Over 1 minute since connection, reconnecting")
+          logging.log(
+            logging.Debug,
+            "Over 1 minute since connection, reconnecting",
+          )
 
           main(
             bot,
@@ -211,7 +214,10 @@ pub fn main(
         }
 
         _ -> {
-          logging.log(logging.Error, "Disconnected after too short time, not reconnecting")
+          logging.log(
+            logging.Error,
+            "Disconnected after too short time, not reconnecting",
+          )
           Nil
         }
       }
