@@ -10,7 +10,7 @@ pub type DiscordError {
   InvalidDynamicList(List(dynamic.DecodeError))
   InvalidFormat(dynamic.DecodeError)
   WebsocketError(Nil)
-  /// When the a request to the API fails
+  /// When a request to the API fails
   HttpError(hackney.Error)
   /// When the API returns an error, but the request was successful
   GenericHttpError(status_code: Int, body: String)

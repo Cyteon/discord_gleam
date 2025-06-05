@@ -1,16 +1,13 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
+import discord_gleam/types/user
 import gleam/dynamic/decode
 import gleam/json
 import gleam/result
 
-pub type ReadyUser {
-  ReadyUser(username: String, id: Snowflake, discriminator: String, bot: Bool)
-}
-
 pub type ReadyData {
   ReadyData(
     v: Int,
-    user: ReadyUser,
+    user: user.User,
     session_id: String,
     resume_gateway_url: String,
   )
@@ -29,13 +26,7 @@ pub fn string_to_data(encoded: String) -> Result(ReadyPacket, String) {
     use d <- decode.field("d", {
       use v <- decode.field("v", decode.int)
 
-      use user <- decode.field("user", {
-        use username <- decode.field("username", decode.string)
-        use id <- decode.field("id", snowflake.decoder())
-        use discriminator <- decode.field("discriminator", decode.string)
-        use bot <- decode.field("bot", decode.bool)
-        decode.success(ReadyUser(username:, id:, discriminator:, bot:))
-      })
+      use user <- decode.field("user", user.from_json_decoder())
 
       use session_id <- decode.field("session_id", decode.string)
       use resume_gateway_url <- decode.field(

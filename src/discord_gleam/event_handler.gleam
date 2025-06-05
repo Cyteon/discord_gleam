@@ -9,11 +9,12 @@ import discord_gleam/ws/packets/ready
 import gleam/list
 import gleam/option
 import gleam/result
+import logging
 
 pub type EventHandler =
   fn(bot.Bot, Packet) -> Nil
 
-/// We currently only have some packets, need more
+/// The supported packets
 pub type Packet {
   /// `MESSAGE_CREATE` event
   MessagePacket(message.MessagePacket)
@@ -25,6 +26,8 @@ pub type Packet {
   MessageDeletePacket(message_delete.MessageDeletePacket)
   /// `INTERACTION_CREATE` event
   InteractionCreate(interaction_create.InteractionCreate)
+
+  /// When we receive a packet that we don't know how to handle
   UnknownPacket(generic.GenericPacket)
 }
 
