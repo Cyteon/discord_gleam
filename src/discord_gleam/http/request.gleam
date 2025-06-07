@@ -27,7 +27,7 @@ pub fn new_with_body(
   |> request.prepend_header("Content-Type", "application/json")
 }
 
-/// Create an unauthenticated request
+/// Create an authenticated request
 pub fn new_auth(
   method: http.Method,
   path: String,
