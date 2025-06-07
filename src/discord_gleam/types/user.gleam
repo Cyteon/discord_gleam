@@ -47,7 +47,7 @@ pub fn from_json_string(encoded: String) -> Result(User, error.DiscordError) {
   }
 }
 
-pub fn from_json_decoder() -> decode.Decoder(User) {
+pub fn from_json_decoder() -> decode.Decoder(PartialUser) {
   use id <- decode.field("id", snowflake.decoder())
   use username <- decode.field("username", decode.string)
   use discriminator <- decode.field("discriminator", decode.string)
