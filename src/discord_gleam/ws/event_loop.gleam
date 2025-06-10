@@ -14,8 +14,8 @@ import gleam/erlang/process
 import gleam/function
 import gleam/http
 import gleam/http/request
-import gleam/json
 import gleam/int
+import gleam/json
 import gleam/option
 import gleam/order
 import gleam/otp/actor
@@ -108,13 +108,14 @@ pub fn main(
                         Ok(s) -> s.1
                         Error(_) -> "0"
                       }
-                      
-                      let packet = json.object([
-                        #("op", json.int(1)),
-                        #("d", json.string("null")),
-                        #("s", json.string(s)),
-                      ])
-                      |> json.to_string()
+
+                      let packet =
+                        json.object([
+                          #("op", json.int(1)),
+                          #("d", json.string("null")),
+                          #("s", json.string(s)),
+                        ])
+                        |> json.to_string()
 
                       logging.log(
                         logging.Debug,
