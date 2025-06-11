@@ -3,7 +3,7 @@ import discord_gleam/discord/intents
 import discord_gleam/event_handler
 import discord_gleam/types/message
 import gleam/list
-import gleam/option.{Some}
+import gleam/option.{None, Some}
 import gleam/string
 import logging
 
@@ -11,7 +11,7 @@ pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot("YOUR TOKEN", "YOUR CLIENT ID", intents.default())
+  let bot = discord_gleam.bot("TOKEN", "CLIENT ID", intents.default())
 
   discord_gleam.run(bot, [event_handler])
 }
@@ -29,45 +29,58 @@ fn event_handler(bot, packet: event_handler.Packet) {
       case string.starts_with(message.d.content, "!kick "), message.d.guild_id {
         True, Some(guild_id) -> {
           let args = string.split(message.d.content, " ")
-
-          let args = case list.pop(args, fn(x) { x == "!kick" }) {
-            Ok(args) -> args.1
-            Error(_) -> [""]
-          }
+          let args = list.drop(args, 1)
 
           let user = case list.first(args) {
             Ok(x) -> x
             Error(_) -> ""
           }
 
-          let args = case list.pop(args, fn(x) { x == user }) {
-            Ok(args) -> args.1
-            Error(_) -> [""]
-          }
+          let args = list.drop(args, 1)
 
           let user = string.replace(user, "<@", "")
           let user = string.replace(user, ">", "")
 
           let reason = string.join(args, " ")
 
-          let resp = discord_gleam.kick_member(bot, guild_id, user, reason)
+          case message.d.guild_id {
+            Some(guild_id) -> {
+              let result =
+                discord_gleam.kick_member(bot, guild_id, user, reason)
 
-          case resp.0 {
-            "OK" -> {
-              discord_gleam.send_message(
-                bot,
-                message.d.channel_id,
-                "Kicked user!",
-                [],
-              )
+              case result {
+                Ok(_) -> {
+                  discord_gleam.send_message(
+                    bot,
+                    message.d.channel_id,
+                    "Kicked user!",
+                    [],
+                  )
+
+                  Nil
+                }
+
+                Error(_) -> {
+                  discord_gleam.send_message(
+                    bot,
+                    message.d.channel_id,
+                    "Failed to kick user",
+                    [],
+                  )
+
+                  Nil
+                }
+              }
             }
-            _ -> {
+            None -> {
               discord_gleam.send_message(
                 bot,
                 message.d.channel_id,
-                "Failed to kick user!",
+                "This command can only be used in a guild.",
                 [],
               )
+
+              Nil
             }
           }
         }

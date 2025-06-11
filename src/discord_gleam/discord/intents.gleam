@@ -1,3 +1,5 @@
+/// Our currently implemented intents, see https://discord.com/developers/docs/events/gateway#gateway-intents \
+/// NOTE: We are still to implement all intents, this is a work in progress.
 pub type Intents {
   Intents(guild_messages: Bool, message_content: Bool, direct_messages: Bool)
 }
@@ -27,7 +29,7 @@ pub fn intents_to_bitfield(intents: Intents) -> Int {
   bitfield
 }
 
-/// Enable a set of default intents, which are usally used by most bots.
+/// Enable a set of default intents, which are usually used by most bots.
 pub fn default() -> Intents {
   Intents(guild_messages: True, message_content: True, direct_messages: True)
 }

@@ -1,44 +1,50 @@
 import discord_gleam/discord/intents
+import gleam/int
 import gleam/json
 
-pub type IdentifyProperties {
-  IdentifyProperties(os: String, browser: String, device: String)
-}
-
-pub type IndentifyData {
-  IndentifyData(token: String, intents: Int, properties: IdentifyProperties)
-}
-
-pub type IdentifyPacket {
-  IdentifyPacket(op: Int, d: IndentifyData)
-}
-
 pub fn create_packet(token: String, intents: intents.Intents) -> String {
-  let raw_packet =
-    IdentifyPacket(
-      op: 2,
-      d: IndentifyData(
-        token: token,
-        intents: intents.intents_to_bitfield(intents),
-        properties: IdentifyProperties("unix", "discord_gleam", "discord_gleam"),
-      ),
-    )
-
   json.object([
-    #("op", json.int(raw_packet.op)),
+    #("op", json.int(2)),
     #(
       "d",
       json.object([
-        #("token", json.string(raw_packet.d.token)),
-        #("intents", json.int(raw_packet.d.intents)),
+        #("token", json.string(token)),
+        #("intents", json.int(intents.intents_to_bitfield(intents))),
         #(
           "properties",
           json.object([
-            #("os", json.string(raw_packet.d.properties.os)),
-            #("browser", json.string(raw_packet.d.properties.browser)),
-            #("device", json.string(raw_packet.d.properties.device)),
+            #("os", json.string("gleam")),
+            #("browser", json.string("discord_gleam")),
+            #("device", json.string("discord_gleam")),
           ]),
         ),
+      ]),
+    ),
+  ])
+  |> json.to_string
+}
+
+pub fn create_resume_packet(
+  token: String,
+  intents: intents.Intents,
+  session_id: String,
+  sequence: String,
+) -> String {
+  json.object([
+    #("op", json.int(6)),
+    #(
+      "d",
+      json.object([
+        #("token", json.string(token)),
+        #("session_id", json.string(session_id)),
+        #(
+          "seq",
+          json.int(case int.parse(sequence) {
+            Ok(s) -> s
+            Error(_) -> 0
+          }),
+        ),
+        #("intents", json.int(intents.intents_to_bitfield(intents))),
       ]),
     ),
   ])

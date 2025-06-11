@@ -1,17 +1,12 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
+import discord_gleam/types/user
 import gleam/dynamic/decode
-import gleam/io
 import gleam/json
 import gleam/option.{type Option}
 import gleam/result
-import logging
-
-pub type InteractionUser {
-  InteractionUser(username: String, id: Snowflake)
-}
 
 pub type InteractionCreateMember {
-  InteractionCreateMember(user: InteractionUser)
+  InteractionCreateMember(user: user.User)
 }
 
 pub type InteractionCommand {
@@ -83,11 +78,7 @@ pub fn string_to_data(encoded: String) -> Result(InteractionCreate, String) {
     use d <- decode.field("d", {
       use token <- decode.field("token", decode.string)
       use member <- decode.field("member", {
-        use user <- decode.field("user", {
-          use username <- decode.field("username", decode.string)
-          use id <- decode.field("id", snowflake.decoder())
-          decode.success(InteractionUser(username:, id:))
-        })
+        use user <- decode.field("user", user.from_json_decoder())
         decode.success(InteractionCreateMember(user:))
       })
 
@@ -121,9 +112,5 @@ pub fn string_to_data(encoded: String) -> Result(InteractionCreate, String) {
   }
 
   json.parse(from: encoded, using: decoder)
-  |> result.map_error(fn(err) {
-    logging.log(logging.Error, "Failed to decode InteractionCreate: ")
-    io.debug(err)
-    "Failed to decode InteractionCreate"
-  })
+  |> result.map_error(fn(_) { "Failed to decode InteractionCreate packet" })
 }

@@ -54,23 +54,42 @@ gleam test  # Run the tests
 
 ## Features:
 
-| Feature              | Status |
-| -------------------- | ------ |
-| Basic events         | ✅     |
-| More events          | 🔨     |
-| Sending messages     | ✅     |
-| Ban/kick             | ✅     |
-| Deleting messages    | ✅     |
-| Embeds               | ✅     |
-| Basic Slash commands | ✅     |
-| Messge Cache         | ✅     |
-| Intents              | 🔨     |
+| Feature               | Status |
+| --------------------- | ------ |
+| Basic events          | ✅     |
+| Sending messages      | ✅     |
+| Ban/kick              | ✅     |
+| Deleting messages     | ✅     |
+| Embeds                | ✅     |
+| Basic Slash commands  | ✅     |
+| Message Cache         | ✅     |
+| Intents               | 🔨     |
 
 ✅ - Done | 🔨 - In Progress | 📆 - Planned | ❌ - Not Planned
 
 ## Supported events:
 
-- READY
-- MESSAGE_CREATE
-- MESSAGE_DELETE
-- INTERACTION_CREATE
+- [x] READY
+- [x] MESSAGE_CREATE
+- [x] MESSAGE_DELETE
+- [x] MESSAGE_UPDATE
+- [x] INTERACTION_CREATE
+- [ ] GUILD_CREATE
+- [ ] GUILD_DELETE
+- [ ] GUILD_UPDATE
+- [ ] CHANNEL_CREATE
+- [ ] CHANNEL_UPDATE
+- [ ] CHANNEL_DELETE
+- [ ] TYPING_START
+- [ ] PRESENCE_UPDATE
+- [ ] GUILD_MEMBER_ADD
+- [ ] GUILD_MEMBER_REMOVE
+- [ ] GUILD_MEMBER_UPDATE
+- [ ] GUILD_MEMBERS_CHUNK
+- [ ] GUILD_BAN_ADD
+- [ ] GUILD_BAN_REMOVE
+- [ ] VOICE_STATE_UPDATE
+- [ ] VOICE_SERVER_UPDATE
+- [ ] GUILD_ROLE_CREATE
+- [ ] GUILD_ROLE_UPDATE
+- [ ] GUILD_ROLE_DELETE
