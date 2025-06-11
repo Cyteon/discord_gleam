@@ -9,7 +9,6 @@ import discord_gleam/ws/packets/ready
 import gleam/list
 import gleam/option
 import gleam/result
-import logging
 
 pub type EventHandler =
   fn(bot.Bot, Packet) -> Nil

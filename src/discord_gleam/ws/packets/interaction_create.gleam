@@ -1,11 +1,9 @@
 import discord_gleam/discord/snowflake.{type Snowflake}
 import discord_gleam/types/user
 import gleam/dynamic/decode
-import gleam/io
 import gleam/json
 import gleam/option.{type Option}
 import gleam/result
-import logging
 
 pub type InteractionCreateMember {
   InteractionCreateMember(user: user.User)

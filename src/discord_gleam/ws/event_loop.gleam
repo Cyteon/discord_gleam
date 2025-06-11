@@ -105,15 +105,19 @@ pub fn main(
                   fn() {
                     repeatedly.call(heartbeat, Nil, fn(_state, _count_) {
                       let s = case uset.lookup(state_uset, "sequence") {
-                        Ok(s) -> s.1
-                        Error(_) -> "0"
+                        Ok(s) ->
+                          case int.parse(s.1) {
+                            Ok(i) -> i
+                            Error(_) -> 0
+                          }
+                        Error(_) -> 0
                       }
 
                       let packet =
                         json.object([
                           #("op", json.int(1)),
                           #("d", json.string("null")),
-                          #("s", json.string(s)),
+                          #("s", json.int(s)),
                         ])
                         |> json.to_string()
 
@@ -148,7 +152,11 @@ pub fn main(
                 case generic_packet.op {
                   7 -> {
                     logging.log(logging.Debug, "Received a reconnect request")
-                    stratus.close(conn)
+                    case stratus.close(conn) {
+                      Ok(_) -> logging.log(logging.Debug, "Closed websocket")
+                      Error(_) ->
+                        logging.log(logging.Error, "Failed to close websocket")
+                    }
 
                     main(
                       bot,

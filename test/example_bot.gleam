@@ -418,20 +418,22 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
                 Error(_) -> "No value"
               }
 
-              discord_gleam.interaction_reply_message(
-                interaction,
-                "test: " <> value,
-                True,
-                // ephemeral
-              )
+              let _ =
+                discord_gleam.interaction_reply_message(
+                  interaction,
+                  "test: " <> value,
+                  True,
+                  // ephemeral
+                )
             }
 
             None -> {
-              discord_gleam.interaction_reply_message(
-                interaction,
-                "test: No options",
-                True,
-              )
+              let _ =
+                discord_gleam.interaction_reply_message(
+                  interaction,
+                  "test: No options",
+                  True,
+                )
             }
           }
 
@@ -454,20 +456,22 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
                 Error(_) -> "No value"
               }
 
-              discord_gleam.interaction_reply_message(
-                interaction,
-                "test2: " <> value,
-                False,
-                // not ephemeral
-              )
+              let _ =
+                discord_gleam.interaction_reply_message(
+                  interaction,
+                  "test2: " <> value,
+                  False,
+                  // not ephemeral
+                )
             }
 
             None -> {
-              discord_gleam.interaction_reply_message(
-                interaction,
-                "test2: No options",
-                False,
-              )
+              let _ =
+                discord_gleam.interaction_reply_message(
+                  interaction,
+                  "test2: No options",
+                  False,
+                )
             }
           }
 

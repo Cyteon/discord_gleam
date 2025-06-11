@@ -1,4 +1,3 @@
-import discord_gleam/discord/snowflake.{type Snowflake}
 import discord_gleam/types/user
 import gleam/dynamic/decode
 import gleam/json
