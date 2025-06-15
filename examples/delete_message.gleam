@@ -10,7 +10,7 @@ pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot("YOUR TOKEN", "YOUR CLIENT ID", intents.default())
+  let bot = discord_gleam.bot("TOKEN", "CLIENT ID", intents.default())
 
   discord_gleam.run(bot, [event_handler])
 }
@@ -28,11 +28,7 @@ fn event_handler(bot, packet: event_handler.Packet) {
       case string.starts_with(message.d.content, "!delete") {
         True -> {
           let args = string.split(message.d.content, " ")
-
-          let args = case list.pop(args, fn(x) { x == "!delete" }) {
-            Ok(args) -> args.1
-            Error(_) -> [""]
-          }
+          let args = list.drop(args, 1)
 
           let reason = string.join(args, " ")
 

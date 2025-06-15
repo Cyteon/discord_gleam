@@ -11,6 +11,7 @@ pub type MessageDeletePacketData {
   )
 }
 
+/// Packet sent by Discord when a message is deleted
 pub type MessageDeletePacket {
   MessageDeletePacket(t: String, s: Int, op: Int, d: MessageDeletePacketData)
 }
@@ -30,5 +31,5 @@ pub fn string_to_data(encoded: String) -> Result(MessageDeletePacket, String) {
   }
 
   json.parse(from: encoded, using: decoder)
-  |> result.map_error(fn(_) { "Failed to decode MessagePacket" })
+  |> result.map_error(fn(_) { "Failed to decode MessageDeletePacket" })
 }

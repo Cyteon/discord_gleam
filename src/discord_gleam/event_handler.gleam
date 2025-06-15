@@ -4,6 +4,7 @@ import discord_gleam/ws/packets/generic
 import discord_gleam/ws/packets/interaction_create
 import discord_gleam/ws/packets/message
 import discord_gleam/ws/packets/message_delete
+import discord_gleam/ws/packets/message_update
 import discord_gleam/ws/packets/ready
 import gleam/list
 import gleam/option
@@ -12,15 +13,29 @@ import gleam/result
 pub type EventHandler =
   fn(bot.Bot, Packet) -> Nil
 
+/// The supported packets
 pub type Packet {
+  /// `MESSAGE_CREATE` event
   MessagePacket(message.MessagePacket)
+  /// `MESSAGE_UPDATE` event
+  MessageUpdatePacket(message_update.MessageUpdatePacket)
+  /// `READY` event
   ReadyPacket(ready.ReadyPacket)
-  UnknownPacket(generic.GenericPacket)
+  /// `MESSAGE_DELETE` event
   MessageDeletePacket(message_delete.MessageDeletePacket)
+  /// `INTERACTION_CREATE` event
   InteractionCreate(interaction_create.InteractionCreate)
+
+  /// When we receive a packet that we don't know how to handle
+  UnknownPacket(generic.GenericPacket)
 }
 
-fn internal_handler(bot: bot.Bot, packet: Packet) -> Nil {
+/// For handling some events the library needs to handle, for functionality
+fn internal_handler(
+  bot: bot.Bot,
+  packet: Packet,
+  state_uset: uset.USet(#(String, String)),
+) -> Nil {
   case packet {
     MessagePacket(msg) -> {
       case bot.cache.messages {
@@ -29,12 +44,37 @@ fn internal_handler(bot: bot.Bot, packet: Packet) -> Nil {
 
           Nil
         }
+
         option.None -> {
           Nil
         }
       }
       Nil
     }
+
+    MessageUpdatePacket(msg) -> {
+      case bot.cache.messages {
+        option.Some(cache) -> {
+          uset.insert(cache, [#(msg.d.id, msg.d)])
+
+          Nil
+        }
+
+        option.None -> {
+          Nil
+        }
+      }
+    }
+
+    ReadyPacket(ready) -> {
+      uset.insert(state_uset, [#("session_id", ready.d.session_id)])
+      uset.insert(state_uset, [
+        #("resume_gateway_url", ready.d.resume_gateway_url),
+      ])
+
+      Nil
+    }
+
     _ -> Nil
   }
 }
@@ -44,13 +84,10 @@ pub fn handle_event(
   bot: bot.Bot,
   msg: String,
   handlers: List(EventHandler),
+  state_uset: uset.USet(#(String, String)),
 ) -> Nil {
   let packet = decode_packet(msg)
-
-  case packet {
-    UnknownPacket(_) -> Nil
-    _ -> internal_handler(bot, packet)
-  }
+  internal_handler(bot, packet, state_uset)
 
   list.each(handlers, fn(handler) { handler(bot, packet) })
 }
@@ -61,6 +98,10 @@ fn decode_packet(msg: String) -> Packet {
     "MESSAGE_CREATE" ->
       message.string_to_data(msg)
       |> result.map(MessagePacket)
+      |> result.unwrap(UnknownPacket(generic_packet))
+    "MESSAGE_UPDATE" ->
+      message_update.string_to_data(msg)
+      |> result.map(MessageUpdatePacket)
       |> result.unwrap(UnknownPacket(generic_packet))
     "READY" ->
       ready.string_to_data(msg)

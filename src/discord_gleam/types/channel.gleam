@@ -3,7 +3,7 @@ import gleam/dynamic/decode
 import gleam/json
 import gleam/option
 
-/// See https://discord.com/developers/docs/resources/channel#channel-object
+/// See https://discord.com/developers/docs/resources/channel#channel-object \
 /// This is a simplified version of the channel object.
 pub type Channel {
   Channel(
@@ -18,6 +18,7 @@ pub type Channel {
   )
 }
 
+/// Convert a JSON string to a channel object
 pub fn string_to_data(encoded: String) -> Result(Channel, json.DecodeError) {
   let decoder = {
     use id <- decode.field("id", snowflake.decoder())

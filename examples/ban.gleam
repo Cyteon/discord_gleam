@@ -2,7 +2,9 @@ import discord_gleam
 import discord_gleam/discord/intents
 import discord_gleam/event_handler
 import discord_gleam/types/message
+import gleam/io
 import gleam/list
+import gleam/option
 import gleam/string
 import logging
 
@@ -10,7 +12,7 @@ pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot("YOUR TOKEN", "YOUR CLIENT ID", intents.default())
+  let bot = discord_gleam.bot("TOKEN", "CLIENT ID", intents.default())
 
   discord_gleam.run(bot, [event_handler])
 }
@@ -22,6 +24,7 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
       Nil
     }
+
     event_handler.MessagePacket(message) -> {
       logging.log(logging.Info, "Message: " <> message.d.content)
 
@@ -29,48 +32,66 @@ fn event_handler(bot, packet: event_handler.Packet) {
         True -> {
           let args = string.split(message.d.content, " ")
 
-          let args = case list.pop(args, fn(x) { x == "!ban" }) {
-            Ok(args) -> args.1
-            Error(_) -> [""]
-          }
+          let args = list.drop(args, 1)
 
           let user = case list.first(args) {
             Ok(x) -> x
             Error(_) -> ""
           }
 
-          let args = case list.pop(args, fn(x) { x == user }) {
-            Ok(args) -> args.1
-            Error(_) -> [""]
-          }
+          let args = list.drop(args, 1)
 
           let user = string.replace(user, "<@", "")
           let user = string.replace(user, ">", "")
 
           let reason = string.join(args, " ")
 
-          let resp =
-            discord_gleam.ban_member(bot, message.d.guild_id, user, reason)
+          case message.d.guild_id {
+            option.Some(id) -> {
+              let resp = discord_gleam.ban_member(bot, id, user, reason)
 
-          case resp.0 {
-            "OK" -> {
-              discord_gleam.send_message(
-                bot,
-                message.d.channel_id,
-                "Banned user!",
-                [],
-              )
+              case resp {
+                Ok(_) -> {
+                  discord_gleam.send_message(
+                    bot,
+                    message.d.channel_id,
+                    "Banned user!",
+                    [],
+                  )
+
+                  Nil
+                }
+
+                Error(err) -> {
+                  discord_gleam.send_message(
+                    bot,
+                    message.d.channel_id,
+                    "Failed to ban user!",
+                    [],
+                  )
+
+                  io.debug(err)
+
+                  Nil
+                }
+              }
             }
-            _ -> {
+
+            option.None -> {
               discord_gleam.send_message(
                 bot,
                 message.d.channel_id,
-                "Failed to ban user!",
+                "This command can only be used in a guild!",
                 [],
               )
+
+              Nil
             }
           }
+
+          Nil
         }
+
         False -> Nil
       }
     }

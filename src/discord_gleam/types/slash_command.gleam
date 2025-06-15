@@ -1,6 +1,8 @@
 import gleam/json
 import gleam/list
 
+/// An simplified command option type \
+/// See https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-structure
 pub type CommandOption {
   CommandOption(
     name: String,

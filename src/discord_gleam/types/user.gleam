@@ -7,6 +7,7 @@ import gleam/result
 import gleam/string
 
 /// User object containing PartialUser and FullUser
+/// FullUser is currently not implemented
 pub type User {
   PartialUser(
     id: Snowflake,
@@ -39,16 +40,19 @@ pub fn from_json_string(encoded: String) -> Result(User, error.DiscordError) {
       Error(error.Unauthorized("Error, 401, Unauthorized :c, is token correct?"))
     }
     False -> {
-      let decoder = {
-        use id <- decode.field("id", snowflake.decoder())
-        use username <- decode.field("username", decode.string)
-        use discriminator <- decode.field("discriminator", decode.string)
-        use avatar <- decode.field("avatar", decode.optional(decode.string))
-        decode.success(PartialUser(id:, username:, discriminator:, avatar:))
-      }
+      let decoder = from_json_decoder()
 
       json.parse(from: encoded, using: decoder)
       |> result.map_error(error.JsonDecodeError)
     }
   }
+}
+
+pub fn from_json_decoder() -> decode.Decoder(User) {
+  use id <- decode.field("id", snowflake.decoder())
+  use username <- decode.field("username", decode.string)
+  use discriminator <- decode.field("discriminator", decode.string)
+  use avatar <- decode.field("avatar", decode.optional(decode.string))
+
+  decode.success(PartialUser(id:, username:, discriminator:, avatar:))
 }
