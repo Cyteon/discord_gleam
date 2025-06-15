@@ -7,6 +7,7 @@ import gleam/result
 import gleam/string
 
 /// User object containing PartialUser and FullUser
+/// FullUser is currently not implemented
 pub type User {
   PartialUser(
     id: Snowflake,

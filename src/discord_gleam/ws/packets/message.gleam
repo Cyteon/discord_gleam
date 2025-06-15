@@ -5,6 +5,7 @@ import gleam/json
 import gleam/option.{type Option, None, Some}
 import gleam/result
 
+/// Represents a message packet data structure, also used on message update
 pub type MessagePacketData {
   MessagePacketData(
     content: String,
@@ -15,6 +16,7 @@ pub type MessagePacketData {
   )
 }
 
+// Packet sent by Discord when a message is sent
 pub type MessagePacket {
   MessagePacket(t: String, s: Int, op: Int, d: MessagePacketData)
 }

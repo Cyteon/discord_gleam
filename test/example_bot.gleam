@@ -461,7 +461,6 @@ fn handler(bot: bot.Bot, packet: event_handler.Packet) {
                   interaction,
                   "test2: " <> value,
                   False,
-                  // not ephemeral
                 )
             }
 

@@ -1,6 +1,7 @@
 import gleam/dynamic/decode
 import gleam/json
 
+/// And packet excluding the data object d: json
 pub type GenericPacket {
   GenericPacket(t: String, s: Int, op: Int)
 }

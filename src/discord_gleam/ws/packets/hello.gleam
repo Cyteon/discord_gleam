@@ -5,6 +5,7 @@ pub type HelloPacketData {
   HelloPacketData(heartbeat_interval: Int)
 }
 
+/// Packet returned by discord upon connecting to the gateway
 pub type HelloPacket {
   HelloPacket(op: Int, d: HelloPacketData)
 }

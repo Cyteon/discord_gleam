@@ -12,6 +12,7 @@ pub type ReadyData {
   )
 }
 
+// Packet sent by Discord when the client is authenticated and ready
 pub type ReadyPacket {
   ReadyPacket(t: String, s: Int, op: Int, d: ReadyData)
 }

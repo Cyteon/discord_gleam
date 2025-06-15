@@ -3,7 +3,6 @@
 
 import birl
 import birl/duration
-import bravo
 import bravo/uset
 import discord_gleam/event_handler
 import discord_gleam/types/bot
@@ -23,11 +22,6 @@ import gleam/string
 import logging
 import repeatedly
 import stratus
-
-pub type Msg {
-  Close
-  TimeUpdated(String)
-}
 
 pub type State {
   State(has_received_hello: Bool, s: Int)

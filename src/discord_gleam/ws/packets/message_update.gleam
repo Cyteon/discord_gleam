@@ -6,6 +6,7 @@ import gleam/json
 import gleam/option.{None, Some}
 import gleam/result
 
+/// Packet sent by Discord when a message is updated
 pub type MessageUpdatePacket {
   MessageUpdatePacket(t: String, s: Int, op: Int, d: message.MessagePacketData)
 }

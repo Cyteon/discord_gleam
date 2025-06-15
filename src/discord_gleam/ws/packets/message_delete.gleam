@@ -11,6 +11,7 @@ pub type MessageDeletePacketData {
   )
 }
 
+/// Packet sent by Discord when a message is deleted
 pub type MessageDeletePacket {
   MessageDeletePacket(t: String, s: Int, op: Int, d: MessageDeletePacketData)
 }
